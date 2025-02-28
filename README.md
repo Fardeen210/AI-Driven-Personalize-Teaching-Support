@@ -1,4 +1,4 @@
-# Smart-Tutor-AI-AI-Driven-Personalized-Teaching-Support
+# Smart-Tutor-AI-Driven-Personalized-Teaching-Support
 
 Background 
 With the rise of digital learning platforms, students rely on search engines and LLMs for quick information. However, these tools often return irrelevant results. Smart Tutor AI (STA) bridges this gap by providing professor-validated course materials, ensuring students receive precise and relevant content. Additionally, graduates lose access to valuable academic resources after completing courses. STA leverages retrieval-augmented generation (RAG) and structured metadata to improve content retrieval, ensuring students retain access to essential knowledge.  Objectives  Develop a structured pipeline for data collection and metadata creation. Implement a vector-based retrieval system for efficient searches. 
