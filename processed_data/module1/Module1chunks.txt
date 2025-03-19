@@ -1,0 +1,3010 @@
+
+Chunk 1:
+#!/usr/bin/env python
+# coding: utf-8
+
+# # BeautifulSoup4
+# 
+# Documentation: https://pypi.org/project/beautifulsoup4/
+# 
+# Other Resources: https://www.crummy.com/software/BeautifulSoup/bs4/doc/#
+
+# # Installing beautifulsoup4
+
+# In[1]:
+
+
+get_ipython().system('pip install beautifulsoup4')
+
+
+# In[2]:
+
+File: Basics_Search_using_BeautifulSoup.py
+Path: C:\Users\natuk\Documents\Masters\LLama\Basics_Search_using_BeautifulSoup.py
+Tokens: 529
+Number of characters: 3789
+
+
+Chunk 2:
+from bs4 import BeautifulSoup
+
+
+# # Reading HTML Files
+
+# ## Reading local HTML File
+
+# In[13]:
+
+
+# HTML From File
+with open("index.html", "r") as f:
+	doc = BeautifulSoup(f, "html.parser")
+
+print(doc)
+
+
+# In[14]:
+
+
+print(doc.prettify())
+
+
+# Searching some type of information:
+
+# By tag name
+
+# In[16]:
+
+File: Basics_Search_using_BeautifulSoup.py
+Path: C:\Users\natuk\Documents\Masters\LLama\Basics_Search_using_BeautifulSoup.py
+Tokens: 529
+Number of characters: 3789
+
+
+Chunk 3:
+tag = doc.title
+print(tag)
+
+
+# Access the string held inside of the tag
+
+# In[17]:
+
+
+print(tag.string)
+
+
+# In[19]:
+
+
+tag.string="Edited Sample HTML Webpage"
+print(tag.string)
+
+
+# In[20]:
+
+
+print(doc)
+
+
+# If there are multiple occurances of the same tag, this gives you only the first.
+
+# In[23]:
+
+File: Basics_Search_using_BeautifulSoup.py
+Path: C:\Users\natuk\Documents\Masters\LLama\Basics_Search_using_BeautifulSoup.py
+Tokens: 529
+Number of characters: 3789
+
+
+Chunk 4:
+tag1=doc.find("a")
+print(tag1)
+
+
+# In[24]:
+
+
+tag2=doc.find_all("a")
+print(tag2)
+
+
+# In[21]:
+
+
+tags = doc.find_all("p")[0]
+
+print(tags.find_all("b"))
+
+
+# ## Reading HTML from Website
+
+# ### Installing Requests
+# Now we can access the websites
+
+# In[25]:
+
+File: Basics_Search_using_BeautifulSoup.py
+Path: C:\Users\natuk\Documents\Masters\LLama\Basics_Search_using_BeautifulSoup.py
+Tokens: 529
+Number of characters: 3789
+
+
+Chunk 5:
+get_ipython().system('pip install requests')
+
+
+# Checking Price of GPU from Newegg website.
+# URL: https://www.newegg.ca/gigabyte-geforce-rtx-4070-gv-n4070wf3oc-12gd/p/N82E16814932611?Item=N82E16814932611
+
+# ### Access price of the GPU in the link
+
+# In[28]:
+
+File: Basics_Search_using_BeautifulSoup.py
+Path: C:\Users\natuk\Documents\Masters\LLama\Basics_Search_using_BeautifulSoup.py
+Tokens: 529
+Number of characters: 3789
+
+
+Chunk 6:
+from bs4 import BeautifulSoup
+import requests
+
+# website want to access
+url="https://www.newegg.ca/gigabyte-geforce-rtx-4070-gv-n4070wf3oc-12gd/p/N82E16814932611?Item=N82E16814932611"
+
+#sending HTTP get request to the URL,
+
+File: Basics_Search_using_BeautifulSoup.py
+Path: C:\Users\natuk\Documents\Masters\LLama\Basics_Search_using_BeautifulSoup.py
+Tokens: 529
+Number of characters: 3789
+
+
+Chunk 7:
+its going to return the contents of the page in results
+result = requests.get(url)
+
+# an HTML document is retrieved
+print(result.text)
+
+
+# Now we will read the HTML webpage for our required information. The URL used in this code allows us to grab its HTML from a script.
+
+File: Basics_Search_using_BeautifulSoup.py
+Path: C:\Users\natuk\Documents\Masters\LLama\Basics_Search_using_BeautifulSoup.py
+Tokens: 529
+Number of characters: 3789
+
+
+Chunk 8:
+There are alot of website which will have like bot protection as built-in and will not allow you to grab the HTML of a page by simple code like we have here.
+# 
+# The website will get to know that you are using a script to grab the code and will actively block you. You should not spam the website with multiple requests.
+
+# In[29]:
+
+File: Basics_Search_using_BeautifulSoup.py
+Path: C:\Users\natuk\Documents\Masters\LLama\Basics_Search_using_BeautifulSoup.py
+Tokens: 529
+Number of characters: 3789
+
+
+Chunk 9:
+doc = BeautifulSoup(result.text,"html.parser")
+print(doc.prettify())
+
+
+# Find the price of the GPU (actual information)
+
+# In[33]:
+
+
+price = doc.find_all(string="$")
+print(price) #this is not useful as we got only the $ sign. But these sign will allow us to access what the price is by using Parent.
+
+File: Basics_Search_using_BeautifulSoup.py
+Path: C:\Users\natuk\Documents\Masters\LLama\Basics_Search_using_BeautifulSoup.py
+Tokens: 529
+Number of characters: 3789
+
+
+Chunk 10:
+# Everything in BeautifulSoup is like a tree like structure. Like html tag is the root of the tree and all other tags are within and it goes on building a tree type structure.<parent  $1234 </parent> We have successfully found the dollar sign. Now we need to find the parent of the "$" sign to access the remaining price.
+
+# In[34]:
+
+
+parent = price[0].parent
+print(parent)
+
+File: Basics_Search_using_BeautifulSoup.py
+Path: C:\Users\natuk\Documents\Masters\LLama\Basics_Search_using_BeautifulSoup.py
+Tokens: 529
+Number of characters: 3789
+
+
+Chunk 11:
+# In[36]:
+
+
+strong = parent.find("strong")
+print(strong)
+
+
+# In[37]:
+
+
+print(strong.string)
+
+
+# **Question- What are the two search functions to look for things in any document?**
+# Use both the types in the other HTML document "Index2.html" and notice the difference.
+
+# In[ ]:
+
+
+result = doc.find_all("option")
+print(result)
+
+File: Basics_Search_using_BeautifulSoup.py
+Path: C:\Users\natuk\Documents\Masters\LLama\Basics_Search_using_BeautifulSoup.py
+Tokens: 529
+Number of characters: 3789
+
+
+Chunk 12:
+# In[ ]:
+
+
+tags = doc.find_all(["p","div","li"])
+print(tags)
+
+
+# Using Regular Expressions to search
+
+# In[39]:
+
+
+get_ipython().system('pip install regex')
+
+
+# In[64]:
+
+File: Basics_Search_using_BeautifulSoup.py
+Path: C:\Users\natuk\Documents\Masters\LLama\Basics_Search_using_BeautifulSoup.py
+Tokens: 529
+Number of characters: 3789
+
+
+Chunk 13:
+from bs4 import BeautifulSoup
+import re
+
+# HTML From File
+with open("index2.html", "r") as f:
+	doc = BeautifulSoup(f, "html.parser")
+# / is escape character
+tags = doc.find_all(string=re.compile("\$.*"))
+print(tags)
+
+
+# In[65]:
+
+
+for tag in tags:
+  print(tag.strip())
+
+
+# In[66]:
+
+File: Basics_Search_using_BeautifulSoup.py
+Path: C:\Users\natuk\Documents\Masters\LLama\Basics_Search_using_BeautifulSoup.py
+Tokens: 529
+Number of characters: 3789
+
+
+Chunk 14:
+tags = doc.find_all(string=re.compile("\$.*"), limit=1)
+print(tags)
+
+
+# In[ ]:
+
+File: Basics_Search_using_BeautifulSoup.py
+Path: C:\Users\natuk\Documents\Masters\LLama\Basics_Search_using_BeautifulSoup.py
+Tokens: 529
+Number of characters: 3789
+
+
+Chunk 15:
+INFO 5731 Computational Methods for Information Systems Section 020 SYLLABUS Spring 2025
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 12
+Number of characters: 94
+
+
+Chunk 16:
+Table of Contents COURSE INFORMATION 1 Instructor Contact Information 1 Teaching Assistant 1 Communicating with Your Instructor 1 Course Prerequisites Corequisites andor Other Restrictions 2 Course Format 2 Course Description 2 Course Goals Learning Objectives 2 Materials 2 Teaching Philosophy 3 TECHNICAL REQUIREMENTSASSISTANCE 3 Minimum Technical Skills Needed 4 Student Academic Support Services 4
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 160
+Number of characters: 4831
+
+
+Chunk 17:
+4 ASSESSMENT GRADING 4 Assessments 4 Grading 4 Grading Table 6 COURSE CALENDAR 6 Table 1 Lessons and Readings 7 Study Schedule and Due Dates 7 Table 2 Study Schedule and Due Dates 7 COURSE EVALUATION 8 Student Evaluation Administration Dates 8 COURSE POLICIES 9 Assignment Policy 9 Examination Policy
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 160
+Number of characters: 4831
+
+
+Chunk 18:
+Examination Policy 9 Instructor Responsibilities and Feedback 9 Late Work and Missed Work 9 Course Incomplete Grade 9 Withdrawal 9 Attendance Policy 10 Students Responsibility for Their Learning 10
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 160
+Number of characters: 4831
+
+
+Chunk 19:
+UNT POLICIES 10 Academic Integrity Policy 10 ADA Policy 10 Emergency Notification Procedures 10 Retention of Student Records 10 Acceptable Student Behavior 11 Access to Information Eagle Connect 11 Sexual Assault Prevention 11 Important Notice for F1 Students taking Distance Education Courses 11 Federal Regulation 11 University of North Texas Compliance 12 Student Verification 12 Use of Student Work 12
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 73
+Number of characters: 1925
+
+
+Chunk 20:
+INFO 5731 Computational Methods for Information Systems Spring 2025 INFO 5731 1 Spring 2025 COURSE INFORMATION INFO 5731 Sections 020 3 Credit Hours Title Computational Methods for Information Systems Meeting Dates Facetoface See Table 2 Meeting Time Wednesday 530PM 820PM Room NTDP B185 Instructor Contact Information Haihua Chen Assistant Professor in Data Science Anuradha
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 292
+Number of characters: 2059
+
+
+Chunk 21:
+and Vikas Sinha Department of Data Science University of North Texas Office DP E298A By appointment Zoom Meeting ID 247 728 2245 By appointment Phone 940 2688589 Email address haihuachenuntedu Teaching Assistant Fengjiao Tu PhD student in Information Science Department of Information Science College of Information Univeristy of North Texas Office and office hour Tuesday 15PM E292L other
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 292
+Number of characters: 2059
+
+
+Chunk 22:
+other time by appointment Zoom meeting ID 884 2281 7391 By appointment Email address fengjiaotumyuntedu Huyen Thi Ngoc Nguyen PhD candidate in Information Science Teaching Fellow Department of Information Science College of Information Univeristy of North Texas Office and office hour Wednesday 13PM E292J other time by appointment Zoom meeting ID 889 281 7606 By appointment Email
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 292
+Number of characters: 2059
+
+
+Chunk 23:
+appointment Email address huyennguyen5myuntedu Fardeen Ali Mohammed Master student in Information Science Department of Information Science College of Information Univeristy of North Texas Office and office hour Wednesday 130pm to 330pm E292L other time by appointment Zoom meeting ID TBA Email address fardeenalimohammedmyuntedu Communicating with Your Instructor This course will have a website in UNT
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 292
+Number of characters: 2059
+
+
+Chunk 24:
+UNT Canvas httpsuntinstructurecomlogincanvas for online discussion assignment submissions and sharing of reading materials Students are welcome to make an appointment with the instructor andor the teaching assistant TA to discuss course related questions in person or online If you need to schedule an individual online meeting with the
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 292
+Number of characters: 2059
+
+
+Chunk 25:
+INFO 5731 Computational Methods for Information Systems Spring 2025 INFO 5731 2 Spring 2025 instructor or the TA please send herhim an email via the course website in Canvas Course Messages to make an appointment Course Prerequisites Corequisites andor Other Restrictions Prerequisite Basic programming knowledge and experience Python or consent of instructor Course Format INFO 5731 Sections 020 hold facetoface lectures by the
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 326
+Number of characters: 2706
+
+
+Chunk 26:
+by the instructor The course uses Canvas UNTs new learning management system All course materials will be available at the course site on Canvas that is accessible to all students And students will submit all assignments through the tools available on Canvas Course Description Introduces computational methods that facilitate information analysis management and presentation in information systems Students learn effective computer programming skills and analytical tools to process real world data Problemoriented and projectbased allows students
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 326
+Number of characters: 2706
+
+
+Chunk 27:
+allows students to explore interesting research ideas or implement useful information management applications Course Goals Learning Objectives Master key concepts and components of NLP and linguistics Manipulate large corpora explore linguistic models and test empirical claims Design and implement applications that process manage and analyze text data Clean and preprocess raw text data using basic natural language processing techniques Demonstrate the ability to extract and analyze information from text data using Python Program Build robust systems
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 326
+Number of characters: 2706
+
+
+Chunk 28:
+robust systems to perform linguistic tasks with technological applications Document and report on information processing and applications Materials Textbook information required 1 Downey Allen B 2016 Think Python How to Think Like a Computer Scientist 2nd Edition OReilly ISBN13 9781491939369 Free access link httpsgreenteapresscomthinkpythonthinkpythonhtml 2 Hapke H Howard C Lane H
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 326
+Number of characters: 2706
+
+
+Chunk 29:
+Lane H 2021 Natural Language Processing in Action Understanding analyzing and generating text with Python 2nd Edition Simon and Schuster Link httpswwwmanningcombooksnaturallanguageprocessinginactionsecondedition Free access link httpswwwnltkorgbook Exercises in the book httpsgithubcomSTRZGRNaturalLanguageProcessingwithPython AnalyzingTextwiththeNaturalLanguageToolkittabreadmeovfile
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 326
+Number of characters: 2706
+
+
+Chunk 30:
+3 Tunstall L Von Werra L Wolf T 2022 Natural language processing with transformers Revised Edition OReilly Media Inc Link httpstransformersbookcom Free access link httpsbooksgooglechbooksid7hhyzgEACAAJ
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 326
+Number of characters: 2706
+
+
+Chunk 31:
+INFO 5731 Computational Methods for Information Systems Spring 2025 INFO 5731 3 Spring 2025 Code example of the book httpsgithubcomnlpwithtransformersnotebooks Supplementary materials andor readings recommended 4 Python Documentation httpswwwpythonorgdoc 5 Python Forums httpspythonforumio 6 Stackoverflow httpsstackoverflowcom 7 NLTK Documentation httpswwwnltkorg 8
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 252
+Number of characters: 2142
+
+
+Chunk 32:
+8 Google Colab httpcolabresearchgooglecom 9 Success Story of Sylvain Gugger httpswwwfastai20190102oneyearofdeeplearning 10 Github link of the first textbook httpsgithubcomAllenDowneyThinkPython 11 Github link of the second textbook httpsgithubcomtotalgoodnlpia 12 Github link of the third textbook
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 252
+Number of characters: 2142
+
+
+Chunk 33:
+third textbook httpsgithubcomnlpwithtransformersnotebooks 13 Jacob Eisenstein 2019 Introduction to Natural Language Processing Adaptive Computation and Machine Learning series The MIT Press ISBN13 9780262042840 Teaching Philosophy The instructor will take a problemsolving approach and work together with students to understand Natural Language Processing We will learn how to solve practical data collecting text processing information extraction and text mining problems He
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 252
+Number of characters: 2142
+
+
+Chunk 34:
+problems He will monitor the progress of students and is open to suggestions from students Students are expected to study 12 15 hours per week and to submit their assignments on time to achieve satisfactory class performance Interaction between the student and the instr uctorTA is guaranteed and strongly encouraged Students who dont have knowledge and experience in python are expected to spend extra hours on this course TECHNICAL REQUIREMENTSASSISTANCE UIT Help
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 252
+Number of characters: 2142
+
+
+Chunk 35:
+UIT Help Desk httpwwwunteduhelpdeskindexhtm The University of North Texas provides student technical support in the use of Canvas and supported resources The student help desk may be reached at Email helpdeskuntedu Phone 9405652324 InPerson Sage Hall Room 330 Hours are MondayThursday 8ammidnight Friday 8am8pm Saturday 9am5p Sunday 8ammidnight
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 252
+Number of characters: 2142
+
+
+Chunk 36:
+INFO 5731 Computational Methods for Information Systems Spring 2025 INFO 5731 4 Spring 2025 Canvas technical requirements httpsclearuntedusupported technologiescanvasrequirements Other related hardware or software necessary for the course such as headsetmicrophone for synchronous chats word processor etc Minimum Technical Skills Needed Using the Internet and the learning management system Canvas using email with attachments creating and submitting files in commonly used word processing program
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 364
+Number of characters: 2508
+
+
+Chunk 37:
+processing program formats downloading and installing software using python programs Student Academic Support Services Code of Student Conduct provides Code of Student Conduct along with other useful links Office of Disability Access exists to prevent discrimination based on disability and to help students reach a higher level of independence Counseling and Testing Services provides counseling services to the UNT community as well as testing services such as admissions testing computer based testing career testing and other tests UNT Libraries
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 364
+Number of characters: 2508
+
+
+Chunk 38:
+Libraries UNT Learning Center provides a variety of services including tutoring to enhance the student academic experience UNT Writing Center offers free writing tutoring to all UNT students undergraduate and graduate including online tutoring Succeed at UNT information regarding how to be a successful student at UNT ASSESSMENT GRADING Assessments Class Attendance and Participation will not be directly graded However students who have 3 absences including excused and
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 364
+Number of characters: 2508
+
+
+Chunk 39:
+and unexcused will receive an F directly A students grade is composed of the following Assignments 50 Term Project 40 Discussions 10 Extra Credits 10 Grading Class Attendance and Participation Class Attendance and Participation will not be directly graded However students who have 3 absences including excused and unexcused will receive an F directly Being late once will be counted as 05 absence Not being present during roll
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 364
+Number of characters: 2508
+
+
+Chunk 40:
+during roll call will be considered as an absence Arriving within 10 minutes after roll call will be considered late Beyond 10 minutes it will be considered as an absence Students who are late should inform the instructor after class to ensur e they are marked as late instead of absent This semester you must meet your project instructor at least four times These meetings will also be counted towards your class attendance and participation grade
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 364
+Number of characters: 2508
+
+
+Chunk 41:
+INFO 5731 Computational Methods for Information Systems Spring 2025 INFO 5731 5 Spring 2025 Assignments 50 The class will have FIVE assignments These assignments are designed to help students understand important concepts and gain hands on experience in Python programming data processing and problemsolving Assignments must be prepared and submitted using Overleaf in LaTeX format Diagrams should be created using appropriate graphics software eg PowerPoint Excel
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 546
+Number of characters: 3613
+
+
+Chunk 42:
+PowerPoint Excel or similar tools Code should be written on Google Colab and students should submit a link to the Colab notebook with their assignment Term Project 40 The term project is structured according to a project based learning framework Throughout the semester students will submit four reports and deliver a final presentation The first three reports each account for 5 of the total grade 15 in total The final project submission consists of a final version
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 546
+Number of characters: 3613
+
+
+Chunk 43:
+final version of the report 5 and a presentation 10 making the term project worth 40 of the total course grade First Report 5 The first report should introduce the project by providing Background and significance of the chosen topic a preliminary literature review and an initial research design specifying the types of data to be collected and the methodology to be used Second Report 5 The second report should detail the progress of data collection including
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 546
+Number of characters: 3613
+
+
+Chunk 44:
+collection including Data sources and collection methods and challenges encountered and how they were addressed Third Report 5 The third report should describe the selected models and evaluation metrics including the rationale for selecting these models and metrics an explanation of the implementation process and any preliminary results obtained during the project Final Submission 15 The final report 5 should be a comprehensive document summarizing the entire project covering all aspects from the background and methodology to results
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 546
+Number of characters: 3613
+
+
+Chunk 45:
+to results analysis and conclusions The final presentation 10 should concisely and effectively communicate the key components of the project including the problem definition methodology results key insights and potential future work Discussions 10 Each week we will post a discussion question for the week in the discussion area Each question is worth 1 of the grade Please preview the class readings and prepare the discussion questions Extra Credits 100 points Extra credits are divided into
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 546
+Number of characters: 3613
+
+
+Chunk 46:
+divided into three parts Paper reading notes 50 points in class presentation 10 points course evaluation 10 points and attending research presentations 30 points Paper reading notes 30 points Students can submit up to 10 reading notes each worth 10 points Only the first 5 submissions will be counted toward the total 50 points Reading notes should be one page long and submitted before each lecture A list of related papers will be
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 546
+Number of characters: 3613
+
+
+Chunk 47:
+will be provided for each lecture and students should select papers from this list Peer review 20 points Peer reviews are conducted as a team Each team is required to provide at least N suggestions for another teams report where N the number of team members The team receiving feedback must respond to each suggestion individually specifying whether they acceping or declining the suggestion and a clear and reasonable explanation must be provided InClass Presentation 10 points
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 546
+Number of characters: 3613
+
+
+Chunk 48:
+points Each student is required to give at least one inclass presentation on a selected paper during the semester The presentation schedule will be
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 546
+Number of characters: 3613
+
+
+Chunk 49:
+INFO 5731 Computational Methods for Information Systems Spring 2025 INFO 5731 6 Spring 2025 determined during the first class Completing both the reading notes and the inclass presentation can earn students a total of 60 points Course Evaluation 10 points At the end of the semester students will receive a link to complete the course evaluation Upon submitting a screenshot showing the completion of the evaluation students will receive
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 300
+Number of characters: 1904
+
+
+Chunk 50:
+will receive 10 extra points Attending Research Presentations 30 points Throughout the semester the instructor will announce relevant research presentations eg online research talks Students can attend up to 3 such presentations Each attended presentation with valid proof of attendance will earn 10 points up to a maximum of 30 points Total Points Possible for SemesterGrading Scale 1100 1100900 A 899800 B 799700 C
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 300
+Number of characters: 1904
+
+
+Chunk 51:
+C 699600 D 599 and below F Grading Table Assignment Points Possible Percentage of Final Grade Assignment Assignment 1 100 points 10 Assignment 2 100 points 10 Assignment 3 100 points 10 Assignment 4 100 points 10 Assignment 5 100 points 10 Term Project First Report 50 points 5 Second Report 50 points 5 Third Report 50 points
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 300
+Number of characters: 1904
+
+
+Chunk 52:
+points 5 Final report 50 pointsb 5 Final presentation 100 points 10 Discussion Each discussion 10 points 100 points 10 Extra credits Readings and presentation 50 points 50 points 5 Inclass presentation 10 points 100 points 10 Course evaluation 10 points 100 points 10 Attend research meetings 30 points 300 points 10 Total Points Possible 1100 points
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 300
+Number of characters: 1904
+
+
+Chunk 53:
+points 110 COURSE CALENDAR The contents of the course are organized into 17 weeks Please refer to Table 1 for lessons topics and readings materials Table 2 lists the suggested study schedule assignments quiz and term project due dates
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 300
+Number of characters: 1904
+
+
+Chunk 54:
+INFO 5731 Computational Methods for Information Systems Spring 2025 INFO 5731 7 Spring 2025 Table 1 Lessons and Readings Lessons Topics Readings Lesson 1 Introduction to Python and NLP Google Colab GitHub Course Orientation and Overview Core Concepts Related to NLP Downey Chapter 1 Hobson Chapter 1 Lesson 2 Python Basic 1 Integers Floats Booleans Strings Lists
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 367
+Number of characters: 2269
+
+
+Chunk 55:
+Strings Lists List Operations Tuples Dictionaries Sets List Comprehensions Files Functions IO Downey Chapter 23 8 10 14 Lesson 3 Python Basics 2 Python Modules Packages Functions Conditionals for Loops Recursion Selections Exceptions Classes and Objects Regular Expression Downey Chapter 47 9 15 18 Lesson 4 Accessing Text Copra and Lexical resources PPT Lesson 5 Raw
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 367
+Number of characters: 2269
+
+
+Chunk 56:
+Raw Text Preprocessing and Cleaning Removing Stop Words Stemming Segmentation and POSTagging Hobson Chapter 2 3 Lesson 6 Analyzing Sentence Structure PPT Lesson 7 Extracting Information from Text Hobson Chapter 610 PPT Lesson 8 Semantic Analysis of Sentences Hobson Chapter 4 Lesson 9 Sentiment Analysis of Text PPT Lesson 10 Text Classification and Clustering PPT Lesson
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 367
+Number of characters: 2269
+
+
+Chunk 57:
+Lesson 11 Generative AIPowered NLP applications Optional PPT Study Schedule and Due Dates Lectures 1 2 4 6 8 10 and 11 will be delivered by Dr Haihua Chen Lectures 3 5 7 and 9 will be delivered by Huyen Thi Ngoc Nguyen Assignments and the Project first submission will due on Sunday midnight of the specified week
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 367
+Number of characters: 2269
+
+
+Chunk 58:
+specified week Quizzes will be available online from 600 pm on Monday to 600 pm on Friday of the specified week Term project final report will due on December 6 midnight The time of the invited talk might be changed based on the speakers schedule Table 2 Study Schedule and Due Dates Week Dates Meeting Date Study Focus Individual tasks Group tasks 1 Jan 13 Jan 19 Jan 15 Syllabus Lesson
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 367
+Number of characters: 2269
+
+
+Chunk 59:
+Lesson 1 Dr Chen Discussion Student Grouping 2 Jan 20 Jan 26 Jan 22 Lesson 2 Dr Chen Assignment 1 Discussion 3 Jan 27 Feb 02 Jan 29 Lesson 3 Huyen Discussion 4 Feb 03 Feb 09 Feb 05 Lesson 4 Dr Chen Discussion 5 Feb 10 Feb 16 Feb 12 Lesson 5 Huyen Assignment 2
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 367
+Number of characters: 2269
+
+
+Chunk 60:
+2 Discussion 6 Feb 17 Feb 23 Feb 19 Lesson 6part 1 Dr Chen Discussion
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 367
+Number of characters: 2269
+
+
+Chunk 61:
+INFO 5731 Computational Methods for Information Systems Spring 2025 INFO 5731 8 Spring 2025 7 Feb 24 Mar 02 Feb 26 Lesson 6part2 Dr Chen Assignment 3 Choosing research topic 8 Mar 03 Mar 09 Mar 05 Work on First Report Term Project Proposal Meet with each group separately to discuss the term project 9 Mar 10 Mar
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 354
+Number of characters: 2111
+
+
+Chunk 62:
+Mar 16 No class No class 10 Mar 17 Mar 23 Mar 19 Project Topics Presentation Discussion Peer Review 11 Mar 24 Mar 30 Mar 26 Lesson 7 Huyen Discussion Second Report Meet your Instructor 12 Mar 31 Apr 06 Apr 02 Lesson 8 Dr Chen Assignment 4 Peer Review 13 Apr 07 Apr 13 Apr 09 Lesson 9
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 354
+Number of characters: 2111
+
+
+Chunk 63:
+9 Huyen Discussion 14 Apr 14 Apr 20 Apr 16 Lesson 10 Dr Chen Assignment 5 Third Report Meet your Instructor 15 Apr 21 Apr 27 Apr 23 Lesson 11 or Invited Talk from Industry Dr Chen Discussion All the extra credit submissions due Peer Review 16 Apr 28 May 04 Apr 30 Class Summary Term Project Presentation Slides of the Project Presentation
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 354
+Number of characters: 2111
+
+
+Chunk 64:
+Project Presentation Due Apr 29 Midnight Term Project Final Report Due at May 02 Midnight Before your Presentation Meet your Instructor Peer Review 17 May 05 May 11 May 07 Instructor will work on the grading COURSE EVALUATION Student Evaluation Administration Dates Student feedback is important and an essential part of participation in this course The student evaluation of instruction is a requirement for all organized classes at UNT The survey will
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 354
+Number of characters: 2111
+
+
+Chunk 65:
+survey will be made available during weeks 13 14 and 15 of the long semesters to provide students with an opportunity to evaluate how this course is taught Students will receive an email from UNT SPOT Course Evaluations via IASystem Notification noreplyiasystemorg with the survey link Students should look for the email in their UNT email inbox Simply click on the link and complete the survey Once
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 354
+Number of characters: 2111
+
+
+Chunk 66:
+survey Once students complete the survey they will receive a confirmation email that the survey has been submitted For addition al information please visit the SPOT website at httpspotuntedu or email spotuntedu
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 354
+Number of characters: 2111
+
+
+Chunk 67:
+INFO 5731 Computational Methods for Information Systems Spring 2025 INFO 5731 9 Spring 2025 COURSE POLICIES Assignment Policy Students should submit the assignments and term project reports via Dropbox at class site in canvasuntedu PDF files with the code link on GitHub included in the file also with the code uploaded on GitHub details will be included in each assignment Examination Policy There are no exams for this
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 398
+Number of characters: 2607
+
+
+Chunk 68:
+for this course Instructor Responsibilities and Feedback Helping students grow and learn Providing clear instructions for projects and assessments Answering questions about assignments Identifying additional resources as necessary Providing grading rubrics Reviewing and updating course content The instructor and TA will respond to students emails and questions posted to the discussion boards within two days except for the weekends Assignments grades and feedback will be returned to the students within one week after the submission deadline Late
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 398
+Number of characters: 2607
+
+
+Chunk 69:
+deadline Late Work and Missed Work Students are expected to submit discussion assignments and projects on time The due dates are Monday 1159 pm of the week specified in Table 2 Study Schedule and Due Dates If an extenuating circumstance such as a medically diagnosed illness or a family emergency arises which prevents you from submitting your assignments you should contact the instructor and the TA as soon as possible before the due date Late work
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 398
+Number of characters: 2607
+
+
+Chunk 70:
+Late work without the permission of the instructor will receive a grade with a 10 penalty or 10 p oints out of 100 per day after the due date A student who is having trouble with assignments is strongly encouraged to contact the instructor and the TA as early as possible for personal advising Course Incomplete Grade The UNT Graduate Catalog httpcatalogunteduindexphpcatoid16 describes and explains grading policies A
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 398
+Number of characters: 2607
+
+
+Chunk 71:
+policies A grade of Incomplete I will be given only for a justifiable reason and only if the student is passing the course The student is responsible for meeting with the instructor to request an incomplete and discuss requirements for completing the course If an incomplete is not removed within the time frame agreed to by the instructor and student the instructor may assign a grade of F Withdrawal The UNT Graduate Catalog
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 398
+Number of characters: 2607
+
+
+Chunk 72:
+Graduate Catalog httpcatalogunteduindexphpcatoid16 describes and explains withdrawal policies and deadlines The UNT semester course schedule lists specific deadlines regarding withdrawal A grade of Withdraw W or Withdraw Failing WF will be given depending on a students
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 398
+Number of characters: 2607
+
+
+Chunk 73:
+INFO 5731 Computational Methods for Information Systems Spring 2025 INFO 5731 10 Spring 2025 attendance record and grade earned Please note that a student who simply stops attending class and does not file a withdrawal form may receive an F Attendance Policy Attending the class meeting is required students who miss more than 3 class meetings will receive an F directly Prior to the meeting please preview the readings for the
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 470
+Number of characters: 3187
+
+
+Chunk 74:
+for the class and prepare your questions for discussion You will miss inclass exercises or quizzes if you do not attend the class Students Responsibility for Their Learning The students are required to follow course schedule and finish the classwork assignments quizzes and term projects Students are expected to study 1215 hours per week to achieve satisfactory class performance Students do not have programming experience are required to find extra materials to study UNT POLICIES
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 470
+Number of characters: 3187
+
+
+Chunk 75:
+Academic Integrity Policy Academic Integrity Standards and Consequences According to UNT Policy 06003 Student Academic Integrity academic dishonesty occurs when students engage in behaviors including but not limited to cheating fabrication facilitating academic dishonesty forgery plagiarism and sabotage A finding of academic dishonesty may result in a range of academic penalties or sanctions ranging from admonition to expulsion from the University ADA Policy UNT makes reasonable academic accommodation for students with disabilities
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 470
+Number of characters: 3187
+
+
+Chunk 76:
+with disabilities Students seeking accommodation must first register with the Office of Disability Accommodation ODA to verify their eligibility If a disability is verified the ODA will provide a student with an accommodation letter to be delivered to faculty to begin a private discussion regarding ones specific course needs Students may request accommodations at any time however ODA notices of accommodation should be provided as early as possible in the semester to avoid any delay in implementation Note
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 470
+Number of characters: 3187
+
+
+Chunk 77:
+implementation Note that students must obtain a new letter of accommodation for every semester and must meet with each faculty member prior to implementation in each class For additional information see the ODA website at disabilityuntedu Emergency Notification Procedures UNT uses a system called Eagle Alert to quickly notify students with critical information in the event of an emergency ie severe weather campus closing and health and public safety emergencies like chemical spills fires or violence In the
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 470
+Number of characters: 3187
+
+
+Chunk 78:
+In the event of a university closure please refer to Blackboard for contingency plans for covering course materials Retention of Student Records Student records pertaining to this course are maintained in a secure location by the instructor of record All records such as exams answer sheets with keys and written papers submitted during the duration of the course are kept for at least one calendar year after course completion Course work completed via the Blackboard online system including grading
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 470
+Number of characters: 3187
+
+
+Chunk 79:
+including grading information and comments is also stored in a safe electronic environment for one year Students have the right to view their individual records however
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 470
+Number of characters: 3187
+
+
+Chunk 80:
+INFO 5731 Computational Methods for Information Systems Spring 2025 INFO 5731 11 Spring 2025 information about students records will not be divulged to other individuals without proper written consent Students are encouraged to review the Public Information Policy and the Family Educational Rights and Privacy Act FERPA laws and the Universitys policy See UNT Policy 1010 Records Management and Retention for additional information Acceptable
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 513
+Number of characters: 3602
+
+
+Chunk 81:
+Acceptable Student Behavior Student behavior that interferes with an instructors ability to conduct a class or other students opportunity to learn is unacceptable and disruptive and will not be tolerated in any instructional forum at UNT Students engaging in unacceptable behavior will be directed to leave the classroom and the instructor may refer the student to the Dean of Students to consider whether the students conduct violated the Code of Student Conduct The Universitys expectations for student conduct
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 513
+Number of characters: 3602
+
+
+Chunk 82:
+student conduct apply to all instructional forums including University and electronic classroom labs discussion groups field trips etc The Code of Student Conduct can be found at deanofstudentsunteduconduct Access to Information Eagle Connect Students access point for business and academic services at UNT is located at myuntedu All official communication from the University will be delivered to a students Eagle Connect account For more information please visit the website that explains Eagle Connect and
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 513
+Number of characters: 3602
+
+
+Chunk 83:
+Connect and how to forward email eagleconnectuntedu Sexual Assault Prevention UNT is committed to providing a safe learning environment free of all forms of sexual misconduct including sexual harassment sexual assault domestic violence dating violence and stalking Federal laws Title IX and the Violence Against Women Act and UNT policies prohibit discrimination on the basis of sex and therefore prohibit sexual misconduct If you or someone you know is experiencing sexual harassment relationship violence stalking andor
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 513
+Number of characters: 3602
+
+
+Chunk 84:
+andor sexual assault there are campus resources available to provide support and assistance UNTs Survivor Advocates can assist a student who has been impacted by violence by filing protective orders completing crime victims compensation applications contacting professors for absences related to an assault working with housing to facilitate a room change where appropriate and connecting students to other resources available both on and off campus The Survivor Advocates can be reached at
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 513
+Number of characters: 3602
+
+
+Chunk 85:
+reached at SurvivorAdvocateuntedu or by calling the Dean of Students Office at  Additionally alleged sexual misconduct can be nonconfidentially reported to the Title IX Coordinator at oeountedu or at 940 565 2759 Important Notice for F1 Students taking Distance Education Courses Federal Regulation To read detailed Immigration and Customs Enforcement regulations for F1 students taking online courses please go to the Electronic Code of Federal Regulations
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 513
+Number of characters: 3602
+
+
+Chunk 86:
+Federal Regulations website at httpwwwecfrgov The specific portion concerning distance education courses is located at Title 8 CFR 2142 Paragraph f6iG The paragraph reads G For F1 students enrolled in classes for credit or classroom hours no more than the equivalent of one class or three credits per session term semester trimester or quarter may be counted toward the full course of study requirement if the class is taken online
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 513
+Number of characters: 3602
+
+
+Chunk 87:
+taken online or through distance education and does not require the students physical attendance for classes examination or other purposes integral to
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 513
+Number of characters: 3602
+
+
+Chunk 88:
+INFO 5731 Computational Methods for Information Systems Spring 2025 INFO 5731 12 Spring 2025 completion of the class An online or distance education course is a course that is offered principally through the use of television audio or computer transmission including open broadcast closed circuit cable microwave or satellite audio conferencing or computer conferencing If the F1 students course of study is in a language study program no online or
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 479
+Number of characters: 3148
+
+
+Chunk 89:
+online or distance education classes may be considered to count toward a students full course of study requirement University of North Texas Compliance To comply with immigration regulations an F1 visa holder within the United States may need to engage in an oncampus experiential component for this course This component which must be approved in advance by the instructor can include activities such as taking an oncampus exam participating in an oncampus lecture
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 479
+Number of characters: 3148
+
+
+Chunk 90:
+lecture or lab activity or other oncampus experience integral to the completion of this course If such an oncampus activity is required it is the students responsibility to do the following 1 Submit a written request to the instructor for an oncampus experiential component within one week of the start of the course 2 Ensure that the activity on campus takes place and the instructor documents it in writing with a notice
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 479
+Number of characters: 3148
+
+
+Chunk 91:
+a notice sent to the International Student and Scholar Services Office ISSS has a form available that you may use for this purpose Because the decision may have serious immigration consequences if an F1 student is unsure about his or her need to participate in an oncampus experiential component for this course she should contact the UNT International Student and Scholar Services Office telephone 9405652195 or email
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 479
+Number of characters: 3148
+
+
+Chunk 92:
+or email internationaladvisinguntedu to get clarification before the oneweek deadline Student Verification UNT takes measures to protect the integrity of educational credentials awarded to students enrolled in distance education courses by verifying student identity protecting student privacy and notifying students of any special meeting timeslocations or additional charges associated with student identity verification in distance education courses See UNT Policy 07002 Student Identity Verification Privacy and Notification and Distance Education
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 479
+Number of characters: 3148
+
+
+Chunk 93:
+Distance Education Courses Use of Student Work A student owns the copyright for all work eg software photographs reports presentations and email postings he or she creates within a class and the University is not entitled to use any student work without the students permission unless all of the following criteria are met The work is used only once The work is not used in its entirety The use of the work does not affect any potential profits from the work The
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 479
+Number of characters: 3148
+
+
+Chunk 94:
+work The student is not identified The work is identified as student work If the use of the work does not meet all of the above criteria then the University office or department using the work must obtain the students written permission Download the UNT System Permission Waiver and Release Form
+
+File: INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\INFO5731_Syllabus_Sping2025_updated_01142025.pdf
+Tokens: 479
+Number of characters: 3148
+
+
+Chunk 95:
+Assignment and Inclass exercises submission using Google Colab and GitHub We will use Google Colab GitHub for inclass exercises and assignment submission Please follow the following instructions to create a repository for this course and connect it with Google Colab Step 1 Create a new account on GitHub or sign in any existing account httpsgithubcom Step 2 Create a new repository for this course with a common convention for naming as follows your
+
+File: Introduction to Google Colab and Github (1) (1).docx
+Path: C:\Users\natuk\Documents\Masters\LLama\Introduction to Google Colab and Github (1) (1).docx
+Tokens: 314
+Number of characters: 2027
+
+
+Chunk 96:
+follows your firstnameINFO5731Fall2024 your first nameINFO5731Fall2024 Click New button on the left side of the window and you will see the following screenshot fill the information and click the create repository button Now you have successfully created a repository for this course in your account as shown in the following screenshot Step 3 Login Google Colab with your Google account by clicking this link
+
+File: Introduction to Google Colab and Github (1) (1).docx
+Path: C:\Users\natuk\Documents\Masters\LLama\Introduction to Google Colab and Github (1) (1).docx
+Tokens: 314
+Number of characters: 2027
+
+
+Chunk 97:
+this link httpscolabresearchgooglecomnotebookswelcomeipynb Step 4 Create the first ipynb file by click File to choose New notebook in drive to write your python code Rename the file for example inclassexercise01 Then add Code module by clicking Code button or add Text module by clicking Text button Look at the following example Click Run under Runtime to run your code Remember to save you code
+
+File: Introduction to Google Colab and Github (1) (1).docx
+Path: C:\Users\natuk\Documents\Masters\LLama\Introduction to Google Colab and Github (1) (1).docx
+Tokens: 314
+Number of characters: 2027
+
+
+Chunk 98:
+you code by using CtrlS keyboard shortcut Step 5 Save your code in the repository you have just created on GitHub Click Save a copy in GitHub under File as shown below Select the repository you have just created for the course and create a file path to your located file as shown in the following screenshot Now your code has been saved successfully on GitHub Step 6 Copy the link for submitting as your assignment as shown in the
+
+File: Introduction to Google Colab and Github (1) (1).docx
+Path: C:\Users\natuk\Documents\Masters\LLama\Introduction to Google Colab and Github (1) (1).docx
+Tokens: 314
+Number of characters: 2027
+
+
+Chunk 99:
+in the following screenshot The GitHub code is publicly accessible which means that you may find your classmates submissions However if we figure that you copy others code you will certainly be given a zero without any excuse
+
+File: Introduction to Google Colab and Github (1) (1).docx
+Path: C:\Users\natuk\Documents\Masters\LLama\Introduction to Google Colab and Github (1) (1).docx
+Tokens: 314
+Number of characters: 2027
+
+
+Chunk 100:
+Haihua Chen PhD Department of Information Science UNT Aug 16 2024 College of Information Computational environment and resources
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 20
+Number of characters: 147
+
+
+Chunk 101:
+Content Introduction to GitHub Introduction to Google Colab Introduction to Anaconda and PyCharm Introduction to Python Tools for Scientific Computing Introduction to Python Tools for Natural Language Processing Introduction to Python Tools for Machine Learning and Deep Learning Introduction to Computational Resources in the Lab
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 52
+Number of characters: 346
+
+
+Chunk 102:
+Content Introduction to GitHub Introduction to Google Colab Introduction to Anaconda and PyCharm Introduction to Python Tools for Scientific Computing Introduction to Python Tools for Natural Language Processing Introduction to Python Tools for Machine Learning and Deep Learning Introduction to Computational Resources in the Lab
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 52
+Number of characters: 346
+
+
+Chunk 103:
+What is GitHub GitHub is a code hosting platform for version control and collaboration It lets you and others work together on projects from anywhere Over 65 million developers shape the future of software together
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 37
+Number of characters: 232
+
+
+Chunk 104:
+How to create a GitHub project Step 1 Create an account on GitHub httpsgithubcom Step 2 Create a new repository for this course with a common convention for naming as follows for example your first nameINFO5731Spring2020
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 38
+Number of characters: 246
+
+
+Chunk 105:
+How to create a GitHub project  Step 3 Login Google Colab with your Google account by clicking this link httpscolabresearchgooglecomnotebookswelcomeipynb Step 4 Create the first ipynb file by click File to choose New Python 3 notebook to write your python code Rename the file for example inclassexercise01
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 49
+Number of characters: 348
+
+
+Chunk 106:
+How to create a GitHub project Then add Code module by clicking Code button or add Text module by clicking Text button Look at the following example Click Run under Runtime to run your code Remember to save you code by using CtrlS keyboard shortcut
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 50
+Number of characters: 282
+
+
+Chunk 107:
+How to create a GitHub project Step 5 Save your code in the repository you have just created on GitHub Click Save a copy in GitHub under File as shown below Select the repository you have just created for the course and create a file path to your located file as shown in the following screenshot
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 58
+Number of characters: 320
+
+
+Chunk 108:
+How to create a GitHub project Now your code has been saved successfully on GitHub
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 17
+Number of characters: 95
+
+
+Chunk 109:
+Content Introduction to GitHub Introduction to Google Colab Introduction to Anaconda and PyCharm Introduction to Python Tools for Scientific Computing Introduction to Python Tools for Natural Language Processing Introduction to Python Tools for Machine Learning and Deep Learning Introduction to Computational Resources in the Lab
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 52
+Number of characters: 346
+
+
+Chunk 110:
+The history of Google Colab  Google is quite aggressive in AI research Over many years Google developed AI framework called TensorFlow and a development tool called Colaboratory Today TensorFlow is opensourced and since 2017 Google made Colaboratory free for public use Colaboratory is now known as Google Colab or simply Colab Another attractive feature that Google offers to the developers is the use of GPU Colab supports GPU and it is totally
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 143
+Number of characters: 880
+
+
+Chunk 111:
+is totally free The reasons for making it free for public could be to make its software a standard in the academics for teaching machine learning and data science It may also have a longterm perspective of building a customer base for Google Cloud APIs which are sold peruse basis Irrespective of the reasons the introduction of Colab has eased the learning and development of machine learning applications
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 143
+Number of characters: 880
+
+
+Chunk 112:
+What is Google Colab  Write and execute code in Python Document your code that supports mathematical equations CreateUploadShare notebooks ImportSave notebooks fromto Google Drive ImportPublish notebooks from GitHub Import external datasets eg from Kaggle Integrate PyTorch TensorFlow Keras OpenCV Free Cloud service with free GPU
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 55
+Number of characters: 368
+
+
+Chunk 113:
+Your First Colab Notebook  Step 1 Open the following URL in your browser httpscolabresearchgooglecom Your browser would display the following screen assuming that you are logged into your Google Drive Step 2 Click on the NEW PYTHON 3 NOTEBOOK link at the bottom of the screen A new notebook would open up as shown in the screen below
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 65
+Number of characters: 367
+
+
+Chunk 114:
+Your First Colab Notebook  Entering Code Executing Code Adding Code Cells Run All Changing Cell Order Deleting Cell
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 26
+Number of characters: 138
+
+
+Chunk 115:
+Documenting Your Code  Markdown Examples Mathematical Equations Code for Sample Equations
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 16
+Number of characters: 106
+
+
+Chunk 116:
+Saving Your Work  Saving to Google Drive Saving to GitHub
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 14
+Number of characters: 72
+
+
+Chunk 117:
+Sharing Notebook  You may enter the email IDs of people with whom you would like to share the current document You can set the kind of access by selecting from the three options shown in the above screen Click on the Get shareable link option to get the URL of your notebook You will find options for whom to share as follows Specified group of people Colleagues in your organization Anyone with the link All public on the web
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 88
+Number of characters: 456
+
+
+Chunk 118:
+Invoking System Commands  Simple Commands Getting Remote Data Cloning Git Repository System Aliases ls bin
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 21
+Number of characters: 128
+
+
+Chunk 119:
+Executing External Python Files  Mounting Drive Tools Command palette Type a few letters like m in the search box to locate the mount command Select Mount Drive command from the list The following code would be inserted in your Code cell If you run this code you will be asked to enter the authentication code The corresponding screen looks as shown below
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 69
+Number of characters: 385
+
+
+Chunk 120:
+Executing External Python Files  Mounting Drive Tools Command palette Open the above URL in your browser You will be asked to login to your Google account Now you will see the following screen If you grant the permissions you will receive your code as follows Cutnpaste this code in the Code cell and hit ENTER After a while the drive will be mounted as seen in the screenshot below Now you are ready to use the contents of your drive in
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 93
+Number of characters: 483
+
+
+Chunk 121:
+drive in Colab
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 93
+Number of characters: 483
+
+
+Chunk 122:
+Executing External Python Files  Listing Drive Contents You can list the contents of the drive using the ls command as follows ls contentdriveMy DriveColab Notebooks This command will list the contents of your Colab Notebooks folder The sample output of my drive contents are shown here Greetingipynb hellopy LogisticRegressionCensusDataipynb LogisticRegressionDigitalOceanipynb MyFirstColabNotebookipynb
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 123
+Number of characters: 863
+
+
+Chunk 123:
+SamplePlotipynb Running Python Code Now let us say that you want to run a Python file called hellopy stored in your Google Drive Type the following command in the Code cell python3 contentdriveMy DriveColab Notebookshellopy The contents of hellopy are given here for your reference printWelcome to TutorialsPoint You will now see the following output Welcome to TutorialsPoint
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 123
+Number of characters: 863
+
+
+Chunk 124:
+Graphical Outputs  Colab also supports rich outputs such as charts
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 13
+Number of characters: 80
+
+
+Chunk 125:
+Code Editing Help  Function List Step 1 Open a new notebook and type in the following code in the Code cell Step 2 Run the code by clicking on the Run icon in the left panel of the Code cell Add another Code cell and type in the following code Function Documentation Colab gives you the documentation on any function or class as a contextsensitive help
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 77
+Number of characters: 385
+
+
+Chunk 126:
+Adding Forms  Adding Form Suppose you want a user set time delay instead of a fixed delay of 5 seconds For this you can add a Form to the Code cell to accept the sleep time Open a new notebook Click on the Options verticallydotted menu A popup menu shows up as seen in the screenshot below Now select Add a form option It will add the form to your Code cell with a Default title as seen in the screenshot here
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 148
+Number of characters: 732
+
+
+Chunk 127:
+screenshot here To change the title of the form click on the Settings button pencil icon on the right It will pop up a settings screen as shown here Change the form title to Form and save the form You may use some other name of your choice Notice that it adds the title to your code cell
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 148
+Number of characters: 732
+
+
+Chunk 128:
+Adding Forms  Adding Form Fields To add a form field click the Options menu in the Code cell click on the Form to reveal the submenus The screen will look as shown below Select Add a form field menu option A dialog pops up as seen here Leave the Form field type to input Change the Variable name to sleeptime and set the Variable type to integer Save the changes by clicking the Save button Your screen will now look like the following
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 99
+Number of characters: 516
+
+
+Chunk 129:
+the following with the sleeptime variable added into the code
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 99
+Number of characters: 516
+
+
+Chunk 130:
+Adding Forms  Testing Form Inputting Text Dropdown List Date Input
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 16
+Number of characters: 85
+
+
+Chunk 131:
+Installing ML Libraries  pip install or aptget install pip install scikitlearn pip install q keras pip3 install torch torchvision pip install tensorflow aptget qq install y libsm6 libxext6 pip install q U opencvpython pip install q xgboost04a30 aptget qq install y graphviz pip install q pydot Python package index httpspypiorg
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 62
+Number of characters: 392
+
+
+Chunk 132:
+Using Free GPU  Enabling GPU To enable GPU in your notebook select the following menu options Runtime Change runtime type Testing for GPU Listing Devices Checking RAM
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 36
+Number of characters: 194
+
+
+Chunk 133:
+Create your ML and DL models on Google Colab  Your First Machine Learning Model httpscolabresearchgooglecomdrive1oQdzTY2wVjO6LqTCUlzR5BN5GL905fRqscrollTo1yE1arm5yEv Stepbystep httpsmachinelearningmasterycommachinelearninginpythonstepbystep Datasets 1
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 49
+Number of characters: 1022
+
+
+Chunk 134:
+1 httpsarchiveicsuciedumldatasetsphp 2 httpswwwpaperswithcodecomdatasetsfbclidIwAR3XPvQwYKwPdPoW7iisKiOAFjlLR9dfG7hPvSTHE0tisclTdZxDvTxHHg Code httpsgithubcommaykulkarniMachineLearningNotebooks Your First Deep Learning Model
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 49
+Number of characters: 1022
+
+
+Chunk 135:
+Learning Model httpscolabresearchgooglecomdrive1oQdzTY2wVjO6LqTCUlzR5BN5GL905fRqscrollTo1yE1arm5yEv Stepbystep httpsmachinelearningmasterycomtutorialfirstneuralnetworkpythonkeras Datasets 1 httpsarchiveicsuciedumldatasetsphp 2
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 49
+Number of characters: 1022
+
+
+Chunk 136:
+2 httpswwwpaperswithcodecomdatasetsfbclidIwAR3XPvQwYKwPdPoW7iisKiOAFjlLR9dfG7hPvSTHE0tisclTdZxDvTxHHg Code httpsneptuneaibloghowtousegooglecolabfordeeplearningcompletetutorial
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 49
+Number of characters: 1022
+
+
+Chunk 137:
+Content Introduction to GitHub Introduction to Google Colab Introduction to Anaconda and PyCharm Introduction to Python Tools for Scientific Computing Introduction to Python Tools for Natural Language Processing Introduction to Python Tools for Machine Learning and Deep Learning Introduction to Computational Resources in the Lab
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 52
+Number of characters: 346
+
+
+Chunk 138:
+How to use Anaconda and PyCharm Getting started with Anaconda httpsdocsanacondacomanacondauserguidegettingstarted Getting started with PyCharm httpswwwjetbrainscomhelppycharmcreatingandrunningyourfirstpython projecthtmleditfile
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 19
+Number of characters: 273
+
+
+Chunk 139:
+Content Introduction to GitHub Introduction to Google Colab Introduction to Anaconda and PyCharm Introduction to Python Tools for Scientific Computing Introduction to Python Tools for Natural Language Processing Introduction to Python Tools for Machine Learning and Deep Learning Introduction to Computational Resources in the Lab
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 52
+Number of characters: 346
+
+
+Chunk 140:
+Pandas is a package providing fast flexible and expressive data structures designed to make working with structured tabular multidimensional potentially heterogeneous and time series data both easy and intuitive Numpy is the core library for scientific computing in Python It provides a high performance multidimensional array object and tools for working with these arrays SciPy builds on NumPy and provides a large number of functions that operate on NumPy arrays and are useful for different types of scientific
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 108
+Number of characters: 728
+
+
+Chunk 141:
+of scientific and engineering applications Matplotlib is a comprehensive library for creating static animated and interactive visualizations in Python  Pandas NumPy Scipy Matplotlib
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 108
+Number of characters: 728
+
+
+Chunk 142:
+What kind of data does Pandas handle How do I read and write tabular data How do I select a subset of a table How to create plots in pandas How to create new columns derived from existing columns How to calculate summary statistics How to reshape the layout of tables How to combine data from multiple tables How to handle time series data How to manipulate textual data Source httpspandaspydataorgpandasdocsstablegettingstartedindexhtml
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 84
+Number of characters: 500
+
+
+Chunk 143:
+Pandas
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 84
+Number of characters: 500
+
+
+Chunk 144:
+Object creation
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 6
+Number of characters: 41
+
+
+Chunk 145:
+Viewing data
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 4
+Number of characters: 24
+
+
+Chunk 146:
+While standard Python NumPy expressions for selecting and setting are intuitive and come in handy for interactive work for production code we recommend the optimized pandas data access methods There are many other functions for selection I will send you some materials  Selection
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 46
+Number of characters: 298
+
+
+Chunk 147:
+Pandas provides various facilities for easily combining together Series DataFrame and Panel objects with various kinds of set logic for the indexes and relational algebra functionality in the case of join mergetype operations  Merge
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 37
+Number of characters: 252
+
+
+Chunk 148:
+01 Lesson Importing libraries Creating data sets Creating data frames Reading from CSV Exporting to CSV Finding maximums Plotting data 02 Lesson Reading from TXT Exporting to TXT Selecting topbottom records Descriptive statistics Groupingsorting data 03 Lesson Creating functions Reading from EXCEL Exporting to EXCEL Outliers Lambda functions Slice and dice data 04 Lesson Addingdeleting columns Index operations 05 Lesson StackUnstackTranspose functions
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 155
+Number of characters: 857
+
+
+Chunk 149:
+functions 06 Lesson GroupBy function 07 Lesson Ways to calculate outliers 08 Lesson Read from Microsoft SQL databases 09 Lesson Export to CSVEXCELTXT 10 Lesson Converting between different kinds of formats 11 Lesson Combining data from various sources  Lessons for New pandas Users
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 155
+Number of characters: 857
+
+
+Chunk 150:
+Fundamental package for scientific computing with Python Efficient Inmemory Contiguous Homogeneous Ndimensional array object An ndarray is a multidimensional container of items of the same type and size The number of dimensions and items in an array is defined by its shape which is a tuple of N positive integers that specify the sizes of each dimension Linear algebra Fourier transform random number capabilities Building block for other packages SciPy Pandas Matplotlib scikitlearn
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 86
+Number of characters: 601
+
+
+Chunk 151:
+suited to many applications Image processing Signal processing Linear algebra etc
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 86
+Number of characters: 601
+
+
+Chunk 152:
+NumPy
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 5
+Number of characters: 31
+
+
+Chunk 153:
+Attributes arithmetic vector
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 6
+Number of characters: 49
+
+
+Chunk 154:
+Array broadcasting
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 5
+Number of characters: 37
+
+
+Chunk 155:
+Matrix operations
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 4
+Number of characters: 29
+
+
+Chunk 156:
+Array operations along axes
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 6
+Number of characters: 39
+
+
+Chunk 157:
+Single Array Iteration red reshaping array Controlling Iteration Order K C F  Iterating over arrays
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 17
+Number of characters: 123
+
+
+Chunk 158:
+1 Index 2 Multiindex 3 Be used to index into other arrays  Indexing
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 15
+Number of characters: 82
+
+
+Chunk 159:
+Matrix operations import numpylinalg eye3 Identity matrix traceA Trace columnstackAB Stack column wise rowstackABA Stack row wise Linear algebra import numpylinalg qr Computes the QR decomposition cholesky Computes the Cholesky decomposition invA Inverse solveAb Solves Ax b for A full rank lstsqAb eigA Eigenvalue decomposition for symmetric or hermitian eigvalsA Computes eigenvalues svdA full
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 132
+Number of characters: 1022
+
+
+Chunk 160:
+full Singular value decomposition pinvA Computes pseudoinverse of A Fourier transform import numpyfft fft 1dimensional DFT fft2 2dimensional DFT fftn Ndimensional DFT ifft 1dimensional inverse DFT etc rfft Real DFT 1dim ifft Imaginary DFT 1dim Random sampling import numpyrandom randd0d1dn Random values in a given shape
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 132
+Number of characters: 1022
+
+
+Chunk 161:
+given shape randnd0 d1 dn Random standard normal randintlo hi size Random integers lo hi choicea size repl p Sample from a shufflea Permutation inplace permutationa Permutation new array332025 48 Other Useful Sub packages
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 132
+Number of characters: 1022
+
+
+Chunk 162:
+SciPy is a library of algorithms and mathematical tools built to work with NumPy arrays  SciPy
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 18
+Number of characters: 106
+
+
+Chunk 163:
+1 scipyclustervq for vector quantization and kmeans clustering 2 scipyclusterhierarchy for hierarchical and agglomerative clustering  Cluster
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 20
+Number of characters: 173
+
+
+Chunk 164:
+The most common IO in SciPy is to import and export Matlab files using loadmatsavemat scipyio contains modules classes and functions to read and write data to a variety of formats Matlab WEKA Matrix Market Wav Netcdf  ioInputoutput
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 47
+Number of characters: 279
+
+
+Chunk 165:
+The scipylinalg module provides standard linear algebra operations some of the main functions are inv Compute the inverse of a matrix pinv Compute the MoorePenrose pseudoinverse of a matrix solve Solve the equation A X B for X det Compute the determinant of a matrix norm Matrix or vector norm eig Solve an ordinary or generalized eigenvalue problem of a square matrix svd Singular Value Decomposition orth Construct an orthonormal basis for the
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 118
+Number of characters: 733
+
+
+Chunk 166:
+for the range of A using SVD qr Compute QR decomposition of a matrix expm Compute the matrix exponential using Pade approximation logm Compute matrix logarithm sinm Matrix sincostan cosm tan funm Evaluate a matrix function specified by a callable  Linalg Linear algebra
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 118
+Number of characters: 733
+
+
+Chunk 167:
+Linalg some examples
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 5
+Number of characters: 34
+
+
+Chunk 168:
+Signal generation
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 4
+Number of characters: 29
+
+
+Chunk 169:
+Optimization is the problem of finding a numerical solution to a minimization or equality The scipyoptimize module provides useful algorithms for 1 Function minimization scalar or multi dimensional 2 Curve fitting 3 Root finding  Optimization
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 37
+Number of characters: 268
+
+
+Chunk 170:
+2test chi2contingency computes the chisquare statistic and pvalue for the hypothesis test of independence of the observed frequencies in the contingency table observed ttest ttest ind calculates the Ttest for the means of TWO INDEPENDENT samples of scores Some other tests  Statistics
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 44
+Number of characters: 314
+
+
+Chunk 171:
+Since python ranges start with 0 the default x vector has the same length as y but starts with 0 Hence the x data are 0123  Matplotlib
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 29
+Number of characters: 157
+
+
+Chunk 172:
+Matplotlib
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 3
+Number of characters: 22
+
+
+Chunk 173:
+Matplotlib
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 3
+Number of characters: 22
+
+
+Chunk 174:
+Matplotlib
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 3
+Number of characters: 22
+
+
+Chunk 175:
+Matplotlib
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 3
+Number of characters: 22
+
+
+Chunk 176:
+Matplotlib
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 3
+Number of characters: 22
+
+
+Chunk 177:
+Content Introduction to GitHub Introduction to Google Colab Introduction to Anaconda and PyCharm Introduction to Python Tools for Scientific Computing Introduction to Python Tools for Natural Language Processing Introduction to Python Tools for Machine Learning and Deep Learning Introduction to Computational Resources in the Lab
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 52
+Number of characters: 346
+
+
+Chunk 178:
+NLTK is a leading platform for building Python programs to work with human language data TextBlob is a Python library for processing textual data Polyglot is a natural language pipeline which supports massive multilingual applications spaCy is completely optimized and highly accurate library widely used in deep learning AllenNLP includes reference implementations of highquality models for both core NLP problems eg semantic role labeling and NLP applications eg textual entailment Gensim is
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 105
+Number of characters: 695
+
+
+Chunk 179:
+is a Python library for topic modelling document indexing and similarity retrieval with large corpora NLTK TextBlob polyglot spaCy AllenNLP Gensim
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 105
+Number of characters: 695
+
+
+Chunk 180:
+1950 NLP started when Alan Turing published an article called Machine and Intelligence 1950 Attempts to automate translation between Russian and English 1960 The work of Chomsky and others on formal language theory and generative syntax 1990 Probabilistic and datadriven models had become quite standard 2000 A Large amount of spoken and textual data become available History Components
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 61
+Number of characters: 414
+
+
+Chunk 181:
+How to Download Install NLTK on WindowsMac Source httpswwwguru99comnltktutorialhtml Play with Kaggle Data httpswwwkagglecomalvationsbasicnlpwithnltk NLTK
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 19
+Number of characters: 190
+
+
+Chunk 182:
+Tokenize Words and Sentences with NLTK Source httpswwwguru99comnltktutorialhtml Play with Kaggle Data httpswwwkagglecomalvationsbasicnlpwithnltk NLTK
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 17
+Number of characters: 183
+
+
+Chunk 183:
+POS PartOfSpeech Tagging Chunking with NLTK POS Tagging Parts of Speech Tagging is a process to mark up the words in text format for a particular part of a speech based on its definition and context It is responsible for text reading in a language and assigning some specific token Parts of Speech to each word It is also called grammatical tagging Chunking in NLP is a process to take small pieces of information and group
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 136
+Number of characters: 864
+
+
+Chunk 184:
+and group them into large units The primary use of Chunking is making groups of noun phrases It is used to add structure to the sentence by following POS tagging combined with regular expressions The resulted group of words are called chunks It is also called shallow parsing Source httpswwwguru99comnltktutorialhtml Play with Kaggle Data httpswwwkagglecomalvationsbasicnlpwithnltk NLTK
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 136
+Number of characters: 864
+
+
+Chunk 185:
+Stemming and Lemmatization with Python NLTK Source httpswwwguru99comnltktutorialhtml Play with Kaggle Data httpswwwkagglecomalvationsbasicnlpwithnltk NLTK
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 17
+Number of characters: 188
+
+
+Chunk 186:
+WordNet a lexical database with NLTK Finding Synonyms for words in Python Source httpswwwguru99comnltktutorialhtml Play with Kaggle Data httpswwwkagglecomalvationsbasicnlpwithnltk NLTK
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 23
+Number of characters: 222
+
+
+Chunk 187:
+Word Embeddings A word embedding is a representation for text where words that have the same meaning have a similar representationlearned Source httpswwwguru99comnltktutorialhtml Play with Kaggle Data httpswwwkagglecomalvationsbasicnlpwithnltk NLTK
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 33
+Number of characters: 285
+
+
+Chunk 188:
+Word Embeddings Source httpswwwguru99comnltktutorialhtml Play with Kaggle Data httpswwwkagglecomalvationsbasicnlpwithnltk NLTK
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 13
+Number of characters: 160
+
+
+Chunk 189:
+Noun phrase extraction Partofspeech tagging Sentiment analysis Classification Naive Bayes Decision Tree Tokenization splitting text into words and sentences Word and phrase frequencies Parsing ngrams Word inflection pluralization and singularization and lemmatization Spelling correction Add new models or languages through extensions WordNet integration Source httpstextblobreadthedocsioendev TextBlob
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 60
+Number of characters: 458
+
+
+Chunk 190:
+Tokenization 165 Languages Language detection 196 Languages Named Entity Recognition 40 Languages Part of Speech Tagging 16 Languages Sentiment Analysis 136 Languages Word Embeddings 137 Languages Morphological analysis 135 Languages Transliteration 69 Languages Source httpspolyglotreadthedocsioenlatestindexhtml polyglot
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 46
+Number of characters: 376
+
+
+Chunk 191:
+Nondestructive tokenization Named entity recognition Support for 53 languages 17 statistical models for 11 languages pretrained word vectors Stateoftheart speed Easy deep learning integration Partofspeech tagging Labelled dependency parsing Syntaxdriven sentence segmentation Built in visualizers for syntax and NER Convenient stringtohash mapping Export to numpy data arrays Efficient binary serialization Easy model packaging and deployment Robust rigorously evaluated accuracy Source
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 80
+Number of characters: 593
+
+
+Chunk 192:
+accuracy Source httpsspacyiousagespacy101whatsspacy spaCy
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 80
+Number of characters: 593
+
+
+Chunk 193:
+Reading Comprehension Named Entity Recognition Sentiment Analysis Dependency Parsing Constituency Parsing Semantic Role Labeling Coreference Resolution Semantic parsing Textual Entailment Language Modeling Source httpsdemoallennlporgreadingcomprehension AllenNLP
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 37
+Number of characters: 303
+
+
+Chunk 194:
+Latent Semantic Analysis LSALSISVD Latent Dirichlet Allocation LDA Random Projections RP Hierarchical Dirichlet Process HDP word2vec deep learning Distributed computing can run Latent Semantic Analysis and Latent Dirichlet Allocation on a cluster of computers Source httpsradimrehurekcomgensimautoexamplesindexhtml Gensim
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 45
+Number of characters: 368
+
+
+Chunk 195:
+Content Introduction to GitHub Introduction to Google Colab Introduction to Anaconda and PyCharm Introduction to Python Tools for Scientific Computing Introduction to Python Tools for Natural Language Processing Introduction to Python Tools for Machine Learning and Deep Learning Introduction to Computational Resources in the Lab
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 52
+Number of characters: 346
+
+
+Chunk 196:
+scikitlearn is a free software machine learning library for the Python It features various classification regression and clustering algorithms including support vector machines random forests gradient boosting kmeans and DBSCAN and is designed to interoperate with the Python numerical and scientific libraries NumPy and SciPy autosklearn frees a machine learning user from algorithm selection and hyperparameter tuning It leverages recent advantages in Bayesian optimization metalearning and ensemble construction transformers provides thousands of
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 191
+Number of characters: 1353
+
+
+Chunk 197:
+thousands of pretrained models to perform tasks on texts such as classification information extraction question answering summarization translation text generation and more in over 100 languages Its aim is to make cuttingedge NLP easier to use for everyone Keras is one of the most popular and opensource neural network libraries for Python Keras was soon supported in TensorFlows core library making it accessible on top of TensorFlow TensorFlow is a fast flexible and scalable opensource
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 191
+Number of characters: 1353
+
+
+Chunk 198:
+opensource machine learning also deep learning library for research and production Together with TensorFlow PyTorch is considered as one of the best Machine Learning and Deep Learning framework scikitlearn autosklearn transformers Keras TensorFlow PyTorch
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 191
+Number of characters: 1353
+
+
+Chunk 199:
+Preprocessing Feature extraction and normalization Dimensionality reduction Reducing the number of random variables to consider Model selection Comparing validating and choosing parameters and models Classification Identifying which category an object belongs to Regression Predicting a continuousvalued attribute associated with an object Clustering Automatic grouping of similar objects into sets Learning Scikitlearn httpswwwyoutubecomwatchvrvVkVsG49uU Scikitlearn website
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 70
+Number of characters: 674
+
+
+Chunk 200:
+website httpsscikitlearnorgstable ScikitLearn ML on Kaggle example httpswwwkagglecomenerrioscikitlearnmlfromstarttofinish Scikitlearn
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 70
+Number of characters: 674
+
+
+Chunk 201:
+Classification Multilabel Classification Regression Continuous and categorical data Iterating over the models Using custom metrics Pandas Train and Test inputs Train a single configuration Resampling strategies Parallel usage manual Parallel usage njobs Random search Sequential usage Successive Halving Extending with a new classifier Extending with a new regressor Extending with a new preprocessor Restrict hyperparameters for a component Learning autosklearn with examples
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 84
+Number of characters: 603
+
+
+Chunk 202:
+with examples httpsautomlgithubioautosklearnmastermanualhtml autosklearn
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 84
+Number of characters: 603
+
+
+Chunk 203:
+transformers Models httpshuggingfacecomodels
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 5
+Number of characters: 62
+
+
+Chunk 204:
+Neural layers Activation and cost functions Objectives Batch normalization Dropout Pooling Example Text Classification With Python and Keras httpswwwkagglecomsanikamaltextclassificationwithpythonandkeras Keras
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 28
+Number of characters: 246
+
+
+Chunk 205:
+Handling deep neural networks Natural Language Processing Partial Differential Equation Abstraction capabilities Image Text and Speech recognition Effortless collaboration of ideas and code Core Task Build Deep Learning models Example Text Classification With Python and TensorFlow httpswwwkagglecomiarunavagoogletextclassificationnotebook httpscolabresearchgooglecomgithubtensorflowdocsblobmastersiteentutori alstexttextclassificationrnnipynb TensorFlow
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 49
+Number of characters: 515
+
+
+Chunk 206:
+Keras vs tfkeras Whats the difference in TensorFlow 20 Keras vs TensorFlow Which one is better and which one should I learn Define your model using the easy to use interface of Keras And then drop down into TensorFlow if you need 1 specific TensorFlow functionality or 2 need to implement a custom feature that Keras does not support but TensorFlow does Keras vs tfkeras Whats the difference in TensorFlow 20 Tensorflow
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 92
+Number of characters: 552
+
+
+Chunk 207:
+Tensorflow Vs Keras Comparison by building a model for image classification Keras VS TensorFlow
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 92
+Number of characters: 552
+
+
+Chunk 208:
+Basic Pytorch Workflow PyTorch Tensors torchTensor Optimizers torchoptim module Neural Networks nn module Autograd Core task Developing and training deep learning models Understand the PyTorch Modules by examples httpspytorchorgtutorialsbeginnerpytorchwithexampleshtmlautograd
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 39
+Number of characters: 321
+
+
+Chunk 209:
+Easy to use API Python support Dynamic computation graphs TorchScript Distributed Training Tools and Libraries PyTorch vs TensorFlow Difference you need to know PyTorch Secure Model Building ML Production Anywhere Robust Experimentation for Research TensorFlow PyTorch VS TensorFlow
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 49
+Number of characters: 316
+
+
+Chunk 210:
+Source httpswwwyoutubecomwatchtimecontinue1vDmI58jz2i6wfeatureemblogo Keras VS PyTorch VS TensorFlow
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 9
+Number of characters: 129
+
+
+Chunk 211:
+Content Introduction to GitHub Introduction to Google Colab Introduction to Anaconda and PyCharm Introduction to Python Tools for Scientific Computing Introduction to Python Tools for Natural Language Processing Introduction to Python Tools for Machine Learning and Deep Learning Introduction to Computational Resources in the Lab
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 52
+Number of characters: 346
+
+
+Chunk 212:
+Machine learning steps 1 Business understanding 2 Data understanding 3 Data preparation 4 Data modeling 5 Evaluation 6 Deployment Factors affect the selection and performance of ML models 1 size quality and nature of the domain data 2 available computational time 3 structure of the desired predictions and loss to be minimized  Machine learning
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 58
+Number of characters: 374
+
+
+Chunk 213:
+Deep learning steps 1 Defining network architectures involves setting finegrained details such as activation functions and the types of layers as well as the overall architecture of the network 2 Defining training routines involves setting the learning rate schedules the learning rules eg stochastic gradient descent SGD Adam the loss functions eg MSE regularization techniques eg early stopping and hyperparameter optimization eg random search bayesian guided search Factors affect the selection and performance of DL models 1
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 101
+Number of characters: 703
+
+
+Chunk 214:
+1 new algorithmic advances 2 availability of huge amount of data to train NNs 3 increase of computing power  Deep learning
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 101
+Number of characters: 703
+
+
+Chunk 215:
+Why Computational Resources Matters
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 6
+Number of characters: 48
+
+
+Chunk 216:
+Before 2012 It was uncommon to use GPUs for ML making any of the results in the graph difficult to achieve 2012 to 2014 Infrastructure to train on many GPUs was uncommon so most results used 18 GPUs rated at 12 TFLOPS for a total of 000101 pfsdays 2014 to 2016 Largescale results used 10100 GPUs rated at 510 TFLOPS resulting
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 126
+Number of characters: 795
+
+
+Chunk 217:
+resulting in 0110 pfsdays Diminishing returns on data parallelism meant that larger training runs had limited value 2016 to 2017 Approaches that allow greater algorithmic parallelism such as huge batch sizes architecture search and expert iteration along with specialized hardware such as TPUs and faster interconnects have greatly increased these limits at least for some applications  Why Computational Resources Matters
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 126
+Number of characters: 795
+
+
+Chunk 218:
+How to calculate the petaflopsday Example of Method 1 Counting operations in the model Example of Method 2 GPU Time Famous DL models Attention is all you need 0089 pfsdays 62017 Adam Optimizer less than 00007 pfsdays 122014 Learning to Align and Translate 0018 pfsdays 92014 GANs less than 0006 pfsdays 62014
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 80
+Number of characters: 515
+
+
+Chunk 219:
+Word2Vec less than 000045 pfsdays 102013 Variational Auto Encoders less than 00000055 pfsdays  94 Why Computational Resources Matters
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 80
+Number of characters: 515
+
+
+Chunk 220:
+CPU vs GPU in ML and DL Many stateoftheart Deep learning networks wouldnt be possible if not for GPU
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 21
+Number of characters: 118
+
+
+Chunk 221:
+CPU The Central Processing Unit is the heart of a computer CPU is a microprocessor designed for latency optimization CPU consists of few powerful cores to perform multiple processes at a time CPU has low bandwidth it can fetch data at a faster rate but cannot process more data at a time GPU Graphics processing unit is built to overcome the performances lag of CPU GPU is designed for bandwidth optimization GPU processor will not wait for data loading and can reuse the data from
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 118
+Number of characters: 636
+
+
+Chunk 222:
+data from another thread or for another thread GPU comprises thousands of weaker cores for computations  CPU vs GPU in ML and DL
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 118
+Number of characters: 636
+
+
+Chunk 223:
+Before the boom of Deep learning Google had an extremely powerful system to do their processing which they had specially built for training huge nets This system was monstrous and was of 5 billion total cost with multiple clusters of CPUs  CPU vs GPU in ML and DL Examples
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 51
+Number of characters: 292
+
+
+Chunk 224:
+1 High bandwidth main memory 2 Hiding memory access latency under thread parallelism 3 Large and fast register and L1 memory which is easily programmable are the components which make GPUs so well suited for deep learning  Why is GPU useful for machine learning and deep learning Quora Answer GPUs for Machine Learning and Deep Learning
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 61
+Number of characters: 365
+
+
+Chunk 225:
+1 NVIDIA DGX STATION httpswwwnvidiacomenusdatacenterdgxstation AI WORKSTATION FOR DATA SCIENCE TEAMS httpswwwnvidiacomcontentdamenzzSolutionsDataCenterdgxstationdgx stationprintInfographic738375nvidiawebpdf 2 NVIDIA H100L 94GB 2 256GB httpswwwnvidiacomcontentdamenzzSolutionsData
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 51
+Number of characters: 663
+
+
+Chunk 226:
+Centerh100PB11773001v01pdf 1 NVIDIA TITAN V httpswwwnvidiacomenustitantitanv 2 NVIDIA Quadro P5000 httpswwwpnycomnvidiaquadrop5000 Texas Advanced Computing Center TACC httpsresearchunteduresearch servicesresearchcomputing  Computational Resources in our Lab
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 51
+Number of characters: 663
+
+
+Chunk 227:
+Account  How to Access Resources
+
+File: Lesson 1-Computational Environment and Resources-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Computational Environment and Resources-2024.pdf
+Tokens: 7
+Number of characters: 45
+
+
+Chunk 228:
+Haihuachenuntedu 9402688589 Lesson 1 Core Concepts in INFO 5731 Haihua Chen Assistant Professor Data Science
+
+File: Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Tokens: 17
+Number of characters: 125
+
+
+Chunk 229:
+Lesson 16 Core concepts in Python Natural language processing Web scarping Corpus Data Quality Data wrangling preprocessing cleaning Tokenization Normalization Stemming Lemmatization Stop Words Partsofspeech POS Tagging Statistical Language Modeling Bag of Words ngrams Regular Expressions Zipfs Law Feature Extraction engineering tfidf Word Embedding
+
+File: Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Tokens: 46
+Number of characters: 395
+
+
+Chunk 230:
+Natural language processing NLP  Natural language processing NLP concerns itself with the interaction between natural human languages and computing devices httpshpccsystemscomresourcesunderstandingnaturallanguage
+
+File: Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Tokens: 23
+Number of characters: 238
+
+
+Chunk 231:
+Web scraping  Web scraping is the process of using bots to extract content and data from a website httpskinstacomknowledgebasewhatiswebscraping
+
+File: Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Tokens: 21
+Number of characters: 164
+
+
+Chunk 232:
+Corpus In linguistics and NLP corpus literally Latin for body refers to a collection of texts Such collections may be formed of a single language of texts or can span multiple languages there are numerous reasons for which multilingual corpora the plural of corpus may be useful Corpora may also consist of themed texts historical Biblical etc
+
+File: Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Tokens: 60
+Number of characters: 374
+
+
+Chunk 233:
+Data Quality Data quality is a measure of a data sets condition based on factors such as accuracy completeness consistency reliability validity and others
+
+File: Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Tokens: 26
+Number of characters: 173
+
+
+Chunk 234:
+Data Wrangling Data wrangling is the process of transforming and structuring data from one raw form into a desired format with the intent of improving data quality and making it more consumable and useful for analytics or machine learning
+
+File: Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Tokens: 41
+Number of characters: 253
+
+
+Chunk 235:
+Tokenization Tokenization is generally an early step in the NLP process a step that splits longer strings of text into smaller pieces or tokens
+
+File: Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Tokens: 26
+Number of characters: 160
+
+
+Chunk 236:
+Normalization Normalization generally refers to a series of related tasks meant to put all text on a level playing field converting all text to the same case upper or lower removing punctuation expanding contractions converting numbers to their word equivalents and so on
+
+File: Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Tokens: 45
+Number of characters: 293
+
+
+Chunk 237:
+Stemming Stemming is the process of eliminating affixes suffixed prefixes infixes circumfixes from a word in order to obtain a word stem
+
+File: Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Tokens: 24
+Number of characters: 155
+
+
+Chunk 238:
+Lemmatization Lemmatization is related to stemming differing in that lemmatization is able to capture a words canonical forms based on its lemma The process resolves words to their dictionary form known as lemma which requires detailed dictionaries so that the algorithm can look into and link words to their corresponding lemmas
+
+File: Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Tokens: 53
+Number of characters: 352
+
+
+Chunk 239:
+Stop Words Stop words are those words that are filtered out before further processing of text since these words contribute little to overall meaning given that they are generally the most common words in a language An example of stop word list httpsgistgithubcomsebleier554280
+
+File: Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Tokens: 45
+Number of characters: 301
+
+
+Chunk 240:
+Partsofspeech POS Tagging POS tagging consists of assigning a category tag to the tokenized parts of a sentence The most popular POS tagging would be identifying words as nouns verbs adjectives etc
+
+File: Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Tokens: 34
+Number of characters: 220
+
+
+Chunk 241:
+Statistical Language Modeling Statistical Language Modeling is the process of building a statistical language model that is meant to provide an estimate of a natural language For a sequence of input words the model would assign a probability to the entire sequence which contributes to the estimated likelihood of various possible sequences
+
+File: Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Tokens: 54
+Number of characters: 361
+
+
+Chunk 242:
+Bagofwords Bag of words is a particular representation model used to simplify the contents of a selection of text The bag of words model omits grammar and word order but is interested in the number of occurrences of words within the text
+
+File: Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Tokens: 44
+Number of characters: 256
+
+
+Chunk 243:
+Ngram ngrams is another representation model for simplifying text selection contents As opposed to the representation of bagofwords ngrams modeling is interested in preserving contiguous sequences of N items from the text selection
+
+File: Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Tokens: 35
+Number of characters: 254
+
+
+Chunk 244:
+Regular Expressions Regular expressions are a triedandtrue method of concisely describing patterns of text A regular expression is represented as a special text string itself and is meant for developing search patterns on selections of text
+
+File: Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Tokens: 38
+Number of characters: 259
+
+
+Chunk 245:
+Zipfs Law Zipfs Law is used to describe the relationship between word frequencies in document collections If a document collections words are ordered by frequency and y is used to describe the number of times that the xth word appears Zipfs observation is concisely captured as y cx12 item frequency is inversely proportional to item rank
+
+File: Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Tokens: 59
+Number of characters: 369
+
+
+Chunk 246:
+Feature Extraction Engineering Feature extraction refers to the process of transforming raw data into numerical features that can be processed while preserving the information in the original data set Feature engineering is the process of selecting manipulating and transforming raw data into features that can be used in supervised learning Feature selection involves identifying the most relevant features for the target variable and discarding the irrelevant ones
+
+File: Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Tokens: 73
+Number of characters: 559
+
+
+Chunk 247:
+ones  httpswwwkagglecomdiscussionsquestionsandanswers388133
+
+File: Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Tokens: 73
+Number of characters: 559
+
+
+Chunk 248:
+Tfidf tfidf is a weighting system that assigns a weight to each word in a document based on its term frequency tf and the reciprocal document frequency tf idf The words with higher scores of weight are deemed to be more significant
+
+File: Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Tokens: 45
+Number of characters: 259
+
+
+Chunk 249:
+Word Embedding Word embedding in NLP is an important term that is used for representing words for text analysis in the form of real valued vectors It is an advancement in NLP that has improved the ability of computers to understand text based content in a better way It is considered one of the most significant breakthroughs of deep learning for solving challenging natural language processing problems Different word embedding techniques
+
+File: Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Tokens: 75
+Number of characters: 474
+
+
+Chunk 250:
+Lesson 711 Information Extraction Name Entity Recognition Similarity Measures Syntactic Analysis Semantic Analysis Sentiment Analysis Text Clustering Topic Modeling Text Classification Machine Translation Information Retrieval Text Summarization Large language models LLMs Generative AI
+
+File: Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Tokens: 35
+Number of characters: 315
+
+
+Chunk 251:
+Information Extraction Information extraction IE is the task of automatically extracting structured information from unstructured andor semistructured machinereadable documents and other electronically represented sources Typically this involves processing human language texts by means of NLP Recent activities in multimedia document processing like automatic annotation and content extraction out of imagesaudiovideodocuments could be seen as information extraction
+
+File: Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Tokens: 59
+Number of characters: 499
+
+
+Chunk 252:
+NamedEntity Recognition Namedentity recognition is a subtask of information extraction that seeks to locate and classify named entities mentioned in unstructured text into predefined categories such as person names organizations locations medical codes time expressions quantities monetary values percentages etc
+
+File: Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Tokens: 43
+Number of characters: 342
+
+
+Chunk 253:
+Similarity Measures Levenshtein the number of characters that must be deleted inserted or substituted in order to make a pair of strings equal Jaccard the measure of overlap between 2 sets in the case of NLP generally documents are sets of words Smith Waterman similar to Levenshtein but with costs assigned to substitution insertion and deletion
+
+File: Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Tokens: 64
+Number of characters: 381
+
+
+Chunk 254:
+Syntactic Analysis  Also referred to as parsing syntactic analysis is the process of analyzing the strings of symbols in natural language in conformance with grammatical rules Levels of syntactic analysis POS tagging Constituency parsing Dependency parsing
+
+File: Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Tokens: 41
+Number of characters: 279
+
+
+Chunk 255:
+Semantic Analysis  Semantic analysis is interested in determining the meaning of text selections either character or word sequences After an input selection of text is read and parsed analyzed syntactically the text selection can then be interpreted for meaning Simply put syntactic analysis is concerned with what words a text selection was made up of while semantic analysis wants to know what the collection of words actually means
+
+File: Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Tokens: 70
+Number of characters: 461
+
+
+Chunk 256:
+Sentiment Analysis  Sentiment analysis is the process of evaluating and determining the sentiment captured in a selection of text with sentiment defined as feeling or emotion This sentiment can be simply positive happy negative sad or angry or neutral or can be some more precise measurement along a scale with neutral in the middle and positive and negative increasing in either direction
+
+File: Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Tokens: 64
+Number of characters: 417
+
+
+Chunk 257:
+Text Clustering  Text clustering is the process of grouping similar documents together based on their content By clustering text we can identify patterns and trends that would otherwise be difficult to discern
+
+File: Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Tokens: 34
+Number of characters: 225
+
+
+Chunk 258:
+Topic Modeling  Topic modeling is a type of statistical modeling for discovering the abstract topics that occur in a collection of documents Topics can be defined as a repeating pattern of cooccurring terms in a corpus A good topic model should result in health doctor patient hospital for a topic Healthcare and farm crops wheat for a topic Farming
+
+File: Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Tokens: 64
+Number of characters: 400
+
+
+Chunk 259:
+Text Classification  Text classification is the process of assigning tags or categories to text according to its content Its one of the fundamental tasks in Natural Language Processing NLP with broad applications such as sentiment analysis topic labeling spam detection and intent detection
+
+File: Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Tokens: 45
+Number of characters: 312
+
+
+Chunk 260:
+Machine Translation  Machine translation is the task of automatically converting source text in one language to text in another language In a machine translation task the input already consists of a sequence of symbols in some language and the computer program must convert this into a sequence of symbols in another language
+
+File: Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Tokens: 54
+Number of characters: 343
+
+
+Chunk 261:
+Information Retrieval  Information retrieval IR is finding material usually documents of an unstructured nature usually text that satisfies an information need from within large collections usually stored on computers httpsnlpstanfordeduIRbookpdf01boolpdf
+
+File: Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Tokens: 32
+Number of characters: 286
+
+
+Chunk 262:
+Text Summarization  Text Summarization is an NLP task that involves condensing a lengthy text document into a shorter more compact version while still retaining the most important information and meaning The goal is to produce a summary that accurately represents the content of the original text in a concise form
+
+File: Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Tokens: 52
+Number of characters: 332
+
+
+Chunk 263:
+Large language models LLMs  Large language models LLMs are deep learning algorithms that can recognize summarize translate predict and generate text and other forms of content based on knowledge gained from massive datasets httpswwwyoutubecomwatchvUCg8W236vfwt12s httpswwwyoutubecomwatchv0pHi6h1DyvQ
+
+File: Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Tokens: 37
+Number of characters: 340
+
+
+Chunk 264:
+Generative AI  Generative AI refers to systems that can create different types of content including text images and code by extrapolating from patterns learned from being trained on vast swathes of data ChatGPT Claude AI Google Bard AI Bing AI Chat Perplexity AI OpenAI GPT Playground Poe by Quora YouChat Chatsonic and others
+
+File: Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Tokens: 55
+Number of characters: 353
+
+
+Chunk 265:
+Thank you
+
+File: Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Core Concepts-Fall 2024- Updated on Aug 21-2024.pdf
+Tokens: 4
+Number of characters: 21
+
+
+Chunk 266:
+Haihuachenuntedu 9402688589 Lesson 1 Orientation and Overview Introduction to computation with python Haihua Chen Assistant Professor Data Science
+
+File: Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Tokens: 18
+Number of characters: 151
+
+
+Chunk 267:
+1 2 How to begin3 4 Agenda What and why is Python Natural Language Processing About the course
+
+File: Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Tokens: 18
+Number of characters: 99
+
+
+Chunk 268:
+1 What and Why is Python
+
+File: Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Tokens: 6
+Number of characters: 26
+
+
+Chunk 269:
+It is an opensource programming language Created by Guido van Rossum in 1989 First version released in 1991 Now 3125 7 August 2024 11 What is Python
+
+File: Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Tokens: 32
+Number of characters: 165
+
+
+Chunk 270:
+Very easy to use 12 Why is Python Let you work quickly Integrate systems more effectively One of the most popular programming languages in the planet
+
+File: Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Tokens: 26
+Number of characters: 152
+
+
+Chunk 271:
+The Top Programming Languages 2024 Source httpswwwgeeksforgeeksorgtopprogramminglanguages
+
+File: Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Tokens: 7
+Number of characters: 99
+
+
+Chunk 272:
+Scientific Calculation Artificial Intelligence Data Analysis Web Crawler Web Development Python 13 Why is PythonArea
+
+File: Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Tokens: 15
+Number of characters: 124
+
+
+Chunk 273:
+Web Crawler Scrapy Source httpswwwdatasciencecentralcomwhatiswebscrapingandhowdoesitwork
+
+File: Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Tokens: 5
+Number of characters: 104
+
+
+Chunk 274:
+Data Analysis NumPyPandasMatplotlib
+
+File: Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Tokens: 3
+Number of characters: 37
+
+
+Chunk 275:
+Scientific Calculation NumPySciPyBioPython
+
+File: Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Tokens: 3
+Number of characters: 44
+
+
+Chunk 276:
+Artificial Intelligence ScikitlearnNLTK Keras TensorFlow PyTorch
+
+File: Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Tokens: 6
+Number of characters: 69
+
+
+Chunk 277:
+Web Development DjangoFlask Tornado
+
+File: Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Tokens: 4
+Number of characters: 37
+
+
+Chunk 278:
+Visualization Matplotlib
+
+File: Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Tokens: 2
+Number of characters: 24
+
+
+Chunk 279:
+Text Mining NLP topic modeling
+
+File: Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Tokens: 5
+Number of characters: 31
+
+
+Chunk 280:
+Who is using Python httpswwwpythonorgaboutsuccess
+
+File: Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Tokens: 5
+Number of characters: 58
+
+
+Chunk 281:
+Coding is never so easy like this
+
+File: Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Tokens: 7
+Number of characters: 37
+
+
+Chunk 282:
+No 1 vs No 2
+
+File: Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Tokens: 5
+Number of characters: 14
+
+
+Chunk 283:
+2 Natural Language Processing NLP
+
+File: Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Tokens: 5
+Number of characters: 36
+
+
+Chunk 284:
+What is Natural Language Processing Brief history of NLP Fundamental Tasks in NLP Some applications of NLP What will be covered
+
+File: Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Tokens: 21
+Number of characters: 129
+
+
+Chunk 285:
+21 What is Natural Language Processing To get computers to perform useful tasks involving human languages
+
+File: Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Tokens: 16
+Number of characters: 108
+
+
+Chunk 286:
+Answers on Quora httpswwwquoracomWhyshouldIlearnNLP Why should I learn NLP 2 days NLP Level 1 Basic Workshop Participants Interview httpsyoutubeUA17IVfArbU Is it still worth learning NLP in the age of APIaccessibles LLM like GPT httpswwwredditcomrlearnmachinelearningcomments10c509nisi
+
+File: Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Tokens: 36
+Number of characters: 364
+
+
+Chunk 287:
+tstillworthlearningnlpintheageof
+
+File: Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Tokens: 36
+Number of characters: 364
+
+
+Chunk 288:
+Languages involve many human activities Why is NLP interesting NLP is used to acquire insights from massive amount of textual data NLP can interact with different languages and different linguistic structures easily Voice can be used as a user interface in many applications NLP is hard
+
+File: Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Tokens: 46
+Number of characters: 287
+
+
+Chunk 289:
+Why is NLP hard Highly ambiguous Natural languages involve reasoning about the world I made her duck may have different meanings It is unlikely that an elephant wears a pajamas sentence I shot an elephant in pajamas
+
+File: Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Tokens: 37
+Number of characters: 221
+
+
+Chunk 290:
+1940s 1950s Automaton ProbabilisticInformation Theoretic models 19571970s Chomsky and others on formal language theory and generative syntax 22 Brief history of NLP 19701983 Explosion in research in speech and language processing 19831993 Empiricism and Finite State Models Redux 19941999 Probabilistic and data driven models
+
+File: Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Tokens: 55
+Number of characters: 422
+
+
+Chunk 291:
+driven models 20002018 Machine Learning and deep learning 2019now Large Language models
+
+File: Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Tokens: 55
+Number of characters: 422
+
+
+Chunk 292:
+Part of speech tagging Word segmentation Syntactic analysis Semantic analysis and sentiment analysis Named entity recognition Topic segmentation and recognition Language translation 23 Fundamental Tasks in NLP
+
+File: Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Tokens: 34
+Number of characters: 225
+
+
+Chunk 293:
+IR QA Information Extraction Machine Translation 24 Some applications of NLP Text Summarization and Generation
+
+File: Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Tokens: 16
+Number of characters: 114
+
+
+Chunk 294:
+3 How to begin
+
+File: Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Tokens: 4
+Number of characters: 16
+
+
+Chunk 295:
+Good resources for reference Python 3125 httpswwwpythonorgdownloadsreleasepython3125 10 Best Python Libraries for NLP in 2024 and their Use Cases httpswwwuniteai10bestpythonlibrariesfornaturallanguageprocessing Top 20 Python Libraries You Must Know In 2024 httpsmediumcomcodingwinnertop20pythonlibrariesyoumustknowin
+
+File: Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Tokens: 36
+Number of characters: 462
+
+
+Chunk 296:
+2024e075c8e50ecf Allennlp httpsgithubcomallenaiallennlp Hugging Face httpshuggingfaceco
+
+File: Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Tokens: 36
+Number of characters: 462
+
+
+Chunk 297:
+All can be done in clouds Recommended Google Colab httpscolabresearchgooglecomnotebookswelcomeipynb GitHub httpsgithubcom PyCharm Version PyCharm 20242 httpswwwjetbrainscompycharmwhatsnew
+
+File: Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Tokens: 17
+Number of characters: 215
+
+
+Chunk 298:
+4 About the course
+
+File: Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Tokens: 4
+Number of characters: 18
+
+
+Chunk 299:
+Master key concepts and components of NLP and linguistics Manipulate large corpora explore linguistic models and test empirical claims Design and implement applications that process manage and analyze text data Clean and preprocess raw text data using basic natural language processing techniques Demonstrate the ability of extracting and analyzing information from text data using Python Program Build robust systems to perform linguistic tasks with technological application Document and report on information processing
+
+File: Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Tokens: 85
+Number of characters: 599
+
+
+Chunk 300:
+information processing and applications Goals and Learning Objectives
+
+File: Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Tokens: 85
+Number of characters: 599
+
+
+Chunk 301:
+Downey Allen B 2016 Think Python How to Think Like a Computer Scientist 2nd Edition OReilly ISBN13 9781491939369 Required MaterialsTextbook Hapke H Howard C Lane H 2021 Natural Language Processing in Action Understanding analyzing and generating text with Python 2nd Edition Simon and Schuster Required Tunstall L Von Werra L Wolf T
+
+File: Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Tokens: 67
+Number of characters: 498
+
+
+Chunk 302:
+Wolf T 2022 Natural language processing with transformers Revised Edition OReilly Media Inc Required
+
+File: Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Tokens: 67
+Number of characters: 498
+
+
+Chunk 303:
+Inclass exercise 20 5 inclass exercises Assignments 40 4 assignments Quizzes 10 5 inclass quizzes Term project 30 Group work Extra credits 6 Reading and presentation Extra credits 3 1 each time Attending research presentations in the department Extra credits 1 Course evaluation Attendance is mandatory to pass Students who miss more than 3 times will be dropped with
+
+File: Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Tokens: 140
+Number of characters: 806
+
+
+Chunk 304:
+dropped with W or WF Cheating will not be tolerated Using ChatGPT is allowed but remember that ChatGPT gives the same output for similar prompts provided by different users Similarity in work would count towards plagiarism Late work without the permission of the instructor will receive a grade with a 10 penalty or 10 points out of 100 per day after the due date Grading
+
+File: Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Tokens: 140
+Number of characters: 806
+
+
+Chunk 305:
+PhD Assistant Professor Data Science 10year experience in python and data analytics Machine learning natural language processing information retrieval and text mining Reviewer of more than 30 peerreview journals and 20 international conferences A good friend who is willing to connect with our master students About me
+
+File: Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Tokens: 52
+Number of characters: 339
+
+
+Chunk 306:
+Publications Lab httpsidealabuntgithubiohomeindexhtml Google Scholar httpsscholargooglecomcitationsuserURmnWAQAAAAJhlenoiao Research Gate httpswwwresearchgatenetprofileHaihuaChen2 GitHub httpsgithubcom About me
+
+File: Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Tokens: 18
+Number of characters: 264
+
+
+Chunk 307:
+Email haihuachenuntedu Cell Phone 9402688589 Office DP E298A Office hour By appointment Zoom ID 247 728 2245 About me
+
+File: Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Tokens: 24
+Number of characters: 135
+
+
+Chunk 308:
+Fengjiao Tu PhD student in Information Science Data Science Concentration Department of Information Science University of North Texas Yuhan Zhou PhD student in Information Science Data Science Concentration Department of Information Science University of North Texas Office hours DP E292J Monday Friday 1200 PM 200 PM Email address fengjiaotumyuntedu yuhanzhoumyuntedu Teaching Assistant
+
+File: Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Tokens: 58
+Number of characters: 424
+
+
+Chunk 309:
+Feedbacks from Previous Students
+
+File: Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Tokens: 4
+Number of characters: 32
+
+
+Chunk 310:
+Feedbacks from Previous Students
+
+File: Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Tokens: 4
+Number of characters: 32
+
+
+Chunk 311:
+Feedbacks from Previous Students
+
+File: Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Tokens: 4
+Number of characters: 32
+
+
+Chunk 312:
+Feedbacks from Previous Students
+
+File: Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Tokens: 4
+Number of characters: 32
+
+
+Chunk 313:
+Thank you
+
+File: Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Path: C:\Users\natuk\Documents\Masters\LLama\Lesson 1-Orientation and Overview-Fall 2024-Updated on Aug 16-2024.pdf
+Tokens: 2
+Number of characters: 9
+
