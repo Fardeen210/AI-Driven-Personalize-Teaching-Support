@@ -8,7 +8,7 @@ from llama_index.core.response_synthesizers import BaseSynthesizer
 from llama_index.llms.ollama import Ollama
 from llama_index.core import StorageContext, load_index_from_storage
 from sentence_transformers import SentenceTransformer
-
+from llama_index.core.schema import Document
 # Define the argument parsing function
 def parse_args():
     parser = argparse.ArgumentParser(description="Smart AI Tutor CLI")
@@ -61,7 +61,9 @@ class RAGQueryEngine(CustomQueryEngine):
 
     def custom_query(self, query_str: str):
         nodes = self.retriever.retrieve(query_str)
-        context_str = "\n".join([node.get_text() for node in nodes])
+        
+        # Ensure we only use TextNode objects to get text
+        context_str = "\n".join([node.get_text() for node in nodes if isinstance(node, Document) and node.get_text()])
         
         # Format the prompt with retrieved context
         formatted_prompt = qa_template.format(context_str=context_str, query_str=query_str)
@@ -69,6 +71,7 @@ class RAGQueryEngine(CustomQueryEngine):
         # Generate response
         response_obj = self.response_synthesizer.synthesize(query=formatted_prompt, nodes=nodes)
         return response_obj
+
 
 # Function to handle the interactive chat
 def chat():
