@@ -1,4 +1,4 @@
-import os
+'''import os
 import torch
 import re
 import unicodedata
@@ -93,7 +93,7 @@ print("\nFull Chat History:")
 for role, content in full_chat_history:
     print(f"{role.capitalize()}: {content}")
 
-'''def get_full_chat_history():
+def get_full_chat_history():
     """Retrieve all stored chat interactions."""
     data = chat_history_collection.get()
     metadatas = data.get("metadatas", [])
