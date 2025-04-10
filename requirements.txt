@@ -1,0 +1,8 @@
+python-dotenv
+sentence-transformers
+llama-index
+pdfplumber
+python-pptx
+transformers
+torch
+chromadb
