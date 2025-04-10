@@ -51,7 +51,6 @@ def preprocess_text(file_path, text):
 # LOAD DOCUMENTS & PREPROCESS
 # ------------------------------
 doc_path = "/Users/Guest/Downloads/Module 2"
-
 try:
     # Specify file extensions you want to read
     reader = SimpleDirectoryReader(doc_path, required_exts=['.pptx', '.ipynb', '.docx', '.csv', '.jpeg', '.pdf', '.png'])
