@@ -39,11 +39,11 @@ qa_template = PromptTemplate(template)
 # Set LLM with formatted prompt template
 Settings.llm = Ollama(
     model="llama3.1:latest",
-    request_timeout=120.0,
+    request_timeout=10.0,
 )
 
 # Set persist directory path
-persist_dir = "/Users/liteshperumalla/Desktop/Files/masters/Smart AI Tutor/persisted_index"  # Replace with the actual path
+persist_dir = "processed_data\module2\persisted_index"
 
 # Rebuild storage context
 storage_context = StorageContext.from_defaults(persist_dir=persist_dir)

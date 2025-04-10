@@ -56,7 +56,7 @@ def preprocess_text(file_path, text):
 # ------------------------------
 # LOAD DOCUMENTS & PREPROCESS
 # ------------------------------
-doc_path = '/Users/shoaibahmedmohammed/Downloads/Smart AI Tutor/Module 2'
+doc_path = ''
 
 try:
     # Specify file extensions you want to read

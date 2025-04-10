@@ -65,7 +65,7 @@ except Exception as e:
     print(f"❌ Error loading embedding model: {e}")
     exit()
 
-Settings.llm = Ollama(model="llama3.1:latest", request_timeout=120.0)
+Settings.llm = Ollama(model="llama3.1:latest", request_timeout=10.0)
 
 # ------------------------------
 # TEXT PREPROCESSING FUNCTION
@@ -110,9 +110,9 @@ def clean_text(text):
     return text
 
 # ------------------------------
-# LOAD DOCUMENTS & PREPROCESS
+# LOAD DOCUMENTS & PREPROCESS from Course modules folder.
 # ------------------------------
-doc_path = "/Users/liteshperumalla/Desktop/Files/masters/Smart AI Tutor/Modules/"
+doc_path = "data\Course_Modules"
 
 try:
     reader = SimpleDirectoryReader(
