@@ -34,7 +34,7 @@ embedding_model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
 Settings.embed_model = HuggingFaceEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
 Settings.llm = Ollama(model="llama3.1:latest", request_timeout=120.0)
 
-persist_dir = "/Users/liteshperumalla/Desktop/Files/masters/Smart AI Tutor/persisted_index"
+persist_dir = "processed_data\module2\persisted_index"
 os.makedirs(persist_dir, exist_ok=True)
 
 storage_context = StorageContext.from_defaults(persist_dir=persist_dir)
@@ -105,7 +105,6 @@ def chat():
 # Main function to control CLI behavior
 def main():
     args = parse_args()
-
     if args.command == 'ingest':
         run_ingestion(args.data_path)
     elif args.command == 'query':
