@@ -1,144 +1,77 @@
-import os
-import torch
+# module2/data_parsing.py
 import re
 import unicodedata
+from pathlib import Path
+
 import pdfplumber
 from pptx import Presentation
-from transformers import AutoModel, AutoTokenizer
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 from llama_index.core import VectorStoreIndex, SimpleDirectoryReader, Settings, get_response_synthesizer
 from llama_index.core.ingestion import IngestionPipeline
-from llama_index.core.node_parser import SentenceSplitter
 from llama_index.vector_stores.chroma import ChromaVectorStore
 from chromadb import PersistentClient
-from llama_index.core.retrievers import BaseRetriever
-from llama_index.core.query_engine import CustomQueryEngine
-from llama_index.core.response_synthesizers import BaseSynthesizer
-from llama_index.llms.ollama import Ollama
-from llama_index.core.readers.base import BaseReader
 from llama_index.core.schema import Document
 
-# ------------------------------
+from module2.config import Config
+from module2.utils import setup_settings, ensure_persist_dir
+
 # CUSTOM PPTX READER
-# ------------------------------
+from llama_index.core.readers.base import BaseReader
+
 class PPTXTextOnlyReader(BaseReader):
     def load_data(self, file_path: str, extra_info=None) -> list[Document]:
         prs = Presentation(file_path)
         text_runs = []
-
         for slide in prs.slides:
             for shape in slide.shapes:
                 if hasattr(shape, "text"):
                     text = shape.text.strip()
                     if text:
-                        cleaned_text = preprocess_text(file_path, text)  # Apply preprocessing
+                        cleaned_text = preprocess_text(file_path, text)
                         text_runs.append(cleaned_text)
-
         full_text = "\n".join(text_runs)
         return [Document(text=full_text, metadata={"file_path": str(file_path)})]
 
-# ------------------------------
 # CUSTOM PDF READER
-# ------------------------------
 class PDFTextOnlyReader(BaseReader):
     def load_data(self, file_path: str, extra_info=None) -> list[Document]:
         text_runs = []
-
         with pdfplumber.open(file_path) as pdf:
             for page in pdf.pages:
                 text = page.extract_text()
                 if text:
-                    cleaned_text = preprocess_text(file_path, text)  # Apply preprocessing
+                    cleaned_text = preprocess_text(file_path, text)
                     text_runs.append(cleaned_text)
-
         full_text = "\n".join(text_runs)
         return [Document(text=full_text, metadata={"file_path": str(file_path)})]
 
-# ------------------------------
-# MODEL & LLM SETTINGS
-# ------------------------------
-try:
-    model_name = "sentence-transformers/all-MiniLM-L6-v2"
-    Settings.embed_model = HuggingFaceEmbedding(model_name=model_name)
-    print(f"✅ Model {model_name} loaded successfully.")
-except Exception as e:
-    print(f"❌ Error loading embedding model: {e}")
-    exit()
-
-Settings.llm = Ollama(model="llama3.1:latest", request_timeout=10.0)
-
-# ------------------------------
-# TEXT PREPROCESSING FUNCTION
-# ------------------------------
+# TEXT PREPROCESSING FUNCTIONS
 def preprocess_text(file_path, text):
-    code_extensions = {".py", ".java", ".cpp", ".js", ".c", ".cs", ".html", ".css", ".php", ".rb"}
+    ext = Path(file_path).suffix.lower()
     text_extensions = {".pdf", ".docx", ".pptx", ".txt"}
-
-    ext = os.path.splitext(file_path)[-1].lower()
-
     if ext in text_extensions:
         text = clean_text(text)
     return text
 
 def clean_text(text):
     text = unicodedata.normalize("NFKD", text)
-
     # Preserve email addresses
     email_pattern = r'([A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,})'
     emails = re.findall(email_pattern, text)
     for i, email in enumerate(emails):
         text = text.replace(email, f'EMAIL_PLACEHOLDER_{i}')
-
     # Preserve URLs
-    url_pattern = r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
+    url_pattern = r'http[s]?://\S+'
     urls = re.findall(url_pattern, text)
     for i, url in enumerate(urls):
         text = text.replace(url, f'URL_PLACEHOLDER_{i}')
-
-    # Remove table of contents artifacts (long sequences of dots)
-    text = re.sub(r'\.{5,}', ' ', text)  # Remove sequences of 5 or more dots
-
-    # Remove excessive spaces and unnecessary formatting
-    text = re.sub(r'\s+', ' ', text).strip()  
-
-    # Restore emails and URLs
+    text = re.sub(r'\.{5,}', ' ', text)
+    text = re.sub(r'\s+', ' ', text).strip()
     for i, email in enumerate(emails):
         text = text.replace(f'EMAIL_PLACEHOLDER_{i}', email)
     for i, url in enumerate(urls):
         text = text.replace(f'URL_PLACEHOLDER_{i}', url)
-
     return text
-
-# ------------------------------
-# LOAD DOCUMENTS & PREPROCESS from Course modules folder.
-# ------------------------------
-doc_path = "data\Course_Modules"
-
-try:
-    reader = SimpleDirectoryReader(
-        input_dir=doc_path,
-        required_exts=['.pptx', '.ipynb', '.docx', '.csv', '.jpeg', '.pdf', '.png', '.py'],
-        file_extractor={".pptx": PPTXTextOnlyReader(), ".pdf": PDFTextOnlyReader()}, 
-        recursive=True
-    )
-    docs = reader.load_data()
-
-    if not docs:
-        print("❌ No documents found! Check the path and file extensions.")
-        exit()
-
-    print(f"✅ Loaded {len(docs)} docs")
-
-except Exception as e:
-    print(f"❌ Error loading documents: {e}")
-    exit()
-
-# ------------------------------
-# PROCESS DOCUMENTS & CHUNKING
-# ------------------------------
-processed_docs = []
-CHUNK_SIZE = 512
-CHUNK_OVERLAP = 50
 
 def chunk_text(text, chunk_size=512, overlap=50):
     chunks = []
@@ -150,103 +83,101 @@ def chunk_text(text, chunk_size=512, overlap=50):
         start += chunk_size - overlap
     return chunks
 
-# Preprocess and chunk the documents
-for doc in docs:
-    doc_text = preprocess_text(doc.metadata.get("file_path", ""), doc.get_content())
-    text_chunks = chunk_text(doc_text)
+def main():
+    setup_settings(Config)
 
-    folder_name = os.path.basename(os.path.dirname(doc.metadata.get("file_path", "")))
-    for chunk in text_chunks:
-        metadata = {
-            "file_name": str(doc.metadata.get("file_name", "")),
-            "file_path": str(doc.metadata.get("file_path", "")),
-            "folder_name": str(folder_name),
-            "num_tokens": int(len(chunk.split())),
-            "num_chars": int(len(chunk)),
-        }
-        processed_docs.append({
-            "doc_id": doc.doc_id,
-            "text": chunk,
-            "metadata": metadata,
-            "category": "<category>"
-        })
+    # Use pathlib for robust path handling
+    doc_path = Path("data/Course_Modules")
+    if not doc_path.exists():
+        print(f"❌ Path {doc_path} does not exist.")
+        return
 
-# ------------------------------
-# CONVERT PROCESSED DOCS TO DOCUMENT OBJECTS
-# ------------------------------
-document_objects = []
-for doc in processed_docs:
-    document_objects.append(Document(text=doc["text"], metadata=doc["metadata"]))
-
-# ------------------------------
-# DOCUMENT PROCESSING PIPELINE
-# ------------------------------
-pipeline = IngestionPipeline(
-    transformations=[
-        Settings.embed_model  # Only apply the embedding model to pre-chunked text
-    ],
-)
-
-try:
-    # Use the document_objects instead of processed_docs
-    nodes = pipeline.run(documents=document_objects)
-    
-    if not nodes:
-        print("❌ No nodes were created. Check document parsing.")
-        exit()
-    print(f"✅ {len(nodes)} document nodes created and stored in ChromaDB.")
-
-    # Add nodes to ChromaDB
-    chroma_path = "./chroma_db"
-    chroma_client = PersistentClient(path=chroma_path)
-    collection = chroma_client.get_or_create_collection("document_chunks")
-
-    vector_store = ChromaVectorStore(chroma_client, collection_name="document_chunks")
-    for i, node in enumerate(nodes):
-        collection.add(
-            ids=[str(i)],
-            documents=[node.text],
-            metadatas=[node.metadata]
+    try:
+        reader = SimpleDirectoryReader(
+            input_dir=str(doc_path),
+            required_exts=['.pptx', '.ipynb', '.docx', '.csv', '.jpeg', '.pdf', '.png', '.py'],
+            file_extractor={
+                ".pptx": PPTXTextOnlyReader(),
+                ".pdf": PDFTextOnlyReader()
+            },
+            recursive=True
         )
+        docs = reader.load_data()
+        if not docs:
+            print("❌ No documents found! Check the path and file extensions.")
+            return
+        print(f"✅ Loaded {len(docs)} docs")
+    except Exception as e:
+        print(f"❌ Error loading documents: {e}")
+        return
 
-except Exception as e:
-    print(f"❌ Error during ingestion pipeline: {e}")
-    exit()
+    processed_docs = []
+    CHUNK_SIZE = 512
+    CHUNK_OVERLAP = 50
 
-# ------------------------------
-# CREATE VECTOR STORE INDEX
-# ------------------------------
-try:
-    index = VectorStoreIndex(nodes, vector_store=vector_store)
-    print("✅ Vector store index created successfully.")
-    persist_dir = "./persisted_index"
-    os.makedirs(persist_dir, exist_ok=True)
-    index.storage_context.persist(persist_dir=persist_dir)
-    print(f"✅ Index persisted to {persist_dir}")
-except Exception as e:
-    print(f"❌ Error creating VectorStoreIndex: {e}")
-    exit()
+    for doc in docs:
+        doc_text = preprocess_text(doc.metadata.get("file_path", ""), doc.get_content())
+        text_chunks = chunk_text(doc_text, CHUNK_SIZE, CHUNK_OVERLAP)
+        folder_name = Path(doc.metadata.get("file_path", "")).parent.name
+        for chunk in text_chunks:
+            metadata = {
+                "file_name": str(doc.metadata.get("file_name", "")),
+                "file_path": str(doc.metadata.get("file_path", "")),
+                "folder_name": folder_name,
+                "num_tokens": len(chunk.split()),
+                "num_chars": len(chunk),
+            }
+            processed_docs.append({
+                "doc_id": doc.doc_id,
+                "text": chunk,
+                "metadata": metadata,
+                "category": "<category>"
+            })
 
-# ------------------------------
-# CREATE CHAT ENGINE & PROCESS QUERY
-# ------------------------------
-class RAGQueryEngine(CustomQueryEngine):
-    """RAG Query Engine for custom retrieval and response synthesis."""
+    document_objects = [Document(text=doc["text"], metadata=doc["metadata"])
+                        for doc in processed_docs]
 
-    retriever: BaseRetriever
-    response_synthesizer: BaseSynthesizer
+    pipeline = IngestionPipeline(
+        transformations=[Settings.embed_model]  # Applying embedding transformation
+    )
 
-    def custom_query(self, query_str: str):
-        nodes = self.retriever.retrieve(query_str)
-        response_obj = self.response_synthesizer.synthesize(query_str, nodes)
-        return response_obj
+    try:
+        nodes = pipeline.run(documents=document_objects)
+        if not nodes:
+            print("❌ No nodes were created. Check document parsing.")
+            return
+        print(f"✅ {len(nodes)} document nodes created and stored in ChromaDB.")
+        
+        chroma_path = Path("./chroma_db")
+        chroma_client = PersistentClient(path=str(chroma_path))
+        collection = chroma_client.get_or_create_collection("document_chunks")
+        vector_store = ChromaVectorStore(chroma_client, collection_name="document_chunks")
+        for i, node in enumerate(nodes):
+            collection.add(
+                ids=[str(i)],
+                documents=[node.text],
+                metadatas=[node.metadata]
+            )
+    except Exception as e:
+        print(f"❌ Error during ingestion pipeline: {e}")
+        return
 
-retriever = index.as_retriever()
-synthesizer = get_response_synthesizer(response_mode="compact")
+    try:
+        index = VectorStoreIndex(nodes, vector_store=vector_store)
+        print("✅ Vector store index created successfully.")
+        persist_dir = ensure_persist_dir("persisted_index")
+        index.storage_context.persist(persist_dir=str(persist_dir))
+        print(f"✅ Index persisted to {persist_dir}")
+    except Exception as e:
+        print(f"❌ Error creating VectorStoreIndex: {e}")
+        return
 
-query_engine = RAGQueryEngine(
-    retriever=retriever, response_synthesizer=synthesizer
-)
+    from module2.utils import RAGQueryEngine
+    retriever = index.as_retriever()
+    synthesizer = get_response_synthesizer(response_mode="compact")
+    query_engine = RAGQueryEngine(retriever=retriever, response_synthesizer=synthesizer)
+    response = query_engine.query("Write a code to find a factorial for a number?")
+    print(response)
 
-response = query_engine.query("Write a code to find a factorial for a number?")
-print(response)
+if __name__ == '__main__':
+    main()
