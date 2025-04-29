@@ -8,7 +8,7 @@ from Tutor_chat import RAGQueryEngine
 st.set_page_config(page_title="Smart AI Tutor", page_icon="🎓", layout="wide")
 
 # ---------- CONFIG ----------
-persist_dir = "/Users/liteshperumalla/Desktop/Files/masters/Smart AI Tutor/persisted_index"
+persist_dir = "processed_data\module2\persisted_index"
 storage_context = StorageContext.from_defaults(persist_dir=persist_dir)
 
 def is_greeting(message):
@@ -253,8 +253,7 @@ def chatbot():
     elif st.session_state.form_submitted:
         st.success("✅ Appointment request already submitted.")
 
-                           
-
+                        
 # ---------- APP ROUTING ----------
 if "page" not in st.session_state:
     st.session_state.page = "home"

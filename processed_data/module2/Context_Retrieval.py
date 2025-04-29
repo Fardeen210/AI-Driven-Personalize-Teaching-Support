@@ -1,7 +1,8 @@
 # module2/context_retrieval.py
 import argparse
-from module2.config import Config
-from module2.utils import setup_settings, ensure_persist_dir, get_storage_context, RAGQueryEngine
+
+from processed_data.module2.config import Config
+from processed_data.module2.utils import setup_settings, ensure_persist_dir, get_storage_context, RAGQueryEngine
 from llama_index.core import load_index_from_storage, get_response_synthesizer
 
 def parse_args():
@@ -61,4 +62,4 @@ def main():
         print("Invalid command. Use -h for help.")
 
 if __name__ == '__main__':
-    main()
+    main()  

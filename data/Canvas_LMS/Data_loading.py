@@ -1,4 +1,4 @@
-import os
+'''import os
 import torch
 import re 
 import torch.multiprocessing
@@ -8,7 +8,7 @@ from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 from llama_index.core import VectorStoreIndex, SimpleDirectoryReader, Settings, get_response_synthesizer
 from llama_index.core.ingestion import IngestionPipeline
 from llama_index.core.node_parser import SentenceSplitter
-from llama_index.vector_stores.chroma import ChromaVectorStore
+#from llama_index.vector_stores.chroma import ChromaVectorStore
 from chromadb import PersistentClient
 from llama_index.core.retrievers import BaseRetriever
 from llama_index.core.query_engine import CustomQueryEngine
@@ -87,7 +87,7 @@ try:
     chroma_client = PersistentClient(path=chroma_path)
     collection = chroma_client.get_or_create_collection("document_chunks")
 
-    vector_store = ChromaVectorStore(chroma_client, collection_name="document_chunks")
+    #vector_store = ChromaVectorStore(chroma_client, collection_name="document_chunks")
     print("✅ ChromaDB initialized successfully.")
 except Exception as e:
     print(f"❌ Error initializing ChromaDB: {e}")
@@ -165,3 +165,4 @@ query_engine = RAGQueryEngine(
 # Query the engine
 response = query_engine.query("What is Python Indentation?")
 print(response)
+'''
